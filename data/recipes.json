@@ -1,0 +1,280 @@
+{
+  "generatedAt": "2026-10-03",
+  "recipes": [
+    {
+      "id": "chicken-traybake",
+      "title": "Chicken traybake",
+      "servings": 4,
+      "minutes": 45,
+      "ingredients": [
+        { "ingredientKey": "chicken_thigh", "qty": 1, "unit": "kg", "essential": true },
+        { "ingredientKey": "potato", "qty": 0.8, "unit": "kg", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "carrot", "qty": 0.3, "unit": "kg", "essential": false },
+        { "ingredientKey": "olive_oil", "qty": 0.03, "unit": "litre", "essential": false }
+      ],
+      "steps": [
+        "Heat the oven to 200C.",
+        "Halve the potatoes, cut the onion into wedges, cut the carrots into batons.",
+        "Tip everything into a roasting tin, add the oil, salt and pepper, and turn it over with your hands.",
+        "Roast 45 minutes. Turn once at the halfway point so the chicken skin colours evenly."
+      ]
+    },
+    {
+      "id": "sausage-and-mash",
+      "title": "Sausage and mash",
+      "servings": 4,
+      "minutes": 40,
+      "ingredients": [
+        { "ingredientKey": "pork_sausage", "qty": 0.45, "unit": "kg", "essential": true },
+        { "ingredientKey": "potato", "qty": 1, "unit": "kg", "essential": true },
+        { "ingredientKey": "butter", "qty": 0.05, "unit": "kg", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.25, "unit": "kg", "essential": false },
+        { "ingredientKey": "milk_whole", "qty": 0.05, "unit": "litre", "essential": false }
+      ],
+      "steps": [
+        "Peel the potatoes, cut them to an even size, boil in salted water 20 minutes until a knife slides through.",
+        "Grill or fry the sausages 15 minutes, turning them.",
+        "Slice the onion thinly and fry it slowly in a little butter until brown.",
+        "Drain the potatoes, dry them in the hot pan for a minute, then mash with the butter and milk.",
+        "Season the mash. Serve the sausages on top with the onions."
+      ]
+    },
+    {
+      "id": "red-lentil-curry",
+      "title": "Red lentil curry",
+      "servings": 4,
+      "minutes": 35,
+      "ingredients": [
+        { "ingredientKey": "lentil_red", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "coconut_milk", "qty": 1, "unit": "each", "essential": true },
+        { "ingredientKey": "curry_paste", "qty": 1, "unit": "each", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.2, "unit": "kg", "essential": true },
+        { "ingredientKey": "tomato_tin", "qty": 1, "unit": "each", "essential": false },
+        { "ingredientKey": "spinach", "qty": 0.1, "unit": "kg", "essential": false },
+        { "ingredientKey": "rice_basmati", "qty": 0.3, "unit": "kg", "essential": false }
+      ],
+      "steps": [
+        "Chop the onion and fry it in oil 8 minutes until soft.",
+        "Stir in two spoons of curry paste and cook one minute.",
+        "Add the lentils, the tin of tomatoes and the coconut milk, plus a tin of water.",
+        "Simmer 20 minutes, stirring now and then, until the lentils collapse.",
+        "Stir the spinach through at the end. Serve with rice."
+      ]
+    },
+    {
+      "id": "chickpea-tomato-stew",
+      "title": "Chickpea and tomato stew",
+      "servings": 4,
+      "minutes": 30,
+      "ingredients": [
+        { "ingredientKey": "chickpea_tin", "qty": 2, "unit": "each", "essential": true },
+        { "ingredientKey": "tomato_tin", "qty": 2, "unit": "each", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.2, "unit": "kg", "essential": true },
+        { "ingredientKey": "garlic", "qty": 1, "unit": "each", "essential": true },
+        { "ingredientKey": "olive_oil", "qty": 0.03, "unit": "litre", "essential": false },
+        { "ingredientKey": "spinach", "qty": 0.1, "unit": "kg", "essential": false },
+        { "ingredientKey": "bread_white", "qty": 1, "unit": "each", "essential": false }
+      ],
+      "steps": [
+        "Chop the onion and three cloves of garlic. Fry in the oil 8 minutes.",
+        "Add both tins of tomatoes and simmer 10 minutes until the sauce thickens.",
+        "Drain and rinse the chickpeas, add them, cook another 8 minutes.",
+        "Season well, stir the spinach through. Serve with bread."
+      ]
+    },
+    {
+      "id": "mushroom-pasta",
+      "title": "Mushroom pasta",
+      "servings": 4,
+      "minutes": 25,
+      "ingredients": [
+        { "ingredientKey": "pasta_penne", "qty": 0.4, "unit": "kg", "essential": true },
+        { "ingredientKey": "mushroom_chestnut", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "garlic", "qty": 1, "unit": "each", "essential": true },
+        { "ingredientKey": "cream_single", "qty": 0.15, "unit": "litre", "essential": false },
+        { "ingredientKey": "cheddar", "qty": 0.05, "unit": "kg", "essential": false }
+      ],
+      "steps": [
+        "Boil the pasta in well salted water.",
+        "Slice the mushrooms thickly. Fry them in a hot dry pan until the water has gone, then add oil and two chopped cloves of garlic.",
+        "Pour in the cream and let it bubble for two minutes.",
+        "Drain the pasta, keeping a cup of the water. Toss the pasta through the sauce, loosening it with the water.",
+        "Grate the cheddar over the top."
+      ]
+    },
+    {
+      "id": "bacon-and-egg-hash",
+      "title": "Bacon and egg hash",
+      "servings": 4,
+      "minutes": 30,
+      "ingredients": [
+        { "ingredientKey": "potato", "qty": 0.8, "unit": "kg", "essential": true },
+        { "ingredientKey": "bacon_rasher", "qty": 0.25, "unit": "kg", "essential": true },
+        { "ingredientKey": "egg", "qty": 4, "unit": "each", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.15, "unit": "kg", "essential": false }
+      ],
+      "steps": [
+        "Cut the potatoes into 2cm cubes and boil 8 minutes. Drain and let them steam dry.",
+        "Fry the rashers in a wide pan until crisp, then lift them out and chop.",
+        "Fry the potatoes and sliced onion in the bacon fat 12 minutes, pressing them down so they crust.",
+        "Stir the bacon back in. Make four gaps, crack an egg into each, cover and cook 4 minutes."
+      ]
+    },
+    {
+      "id": "salmon-and-leek-traybake",
+      "title": "Salmon and leek traybake",
+      "servings": 4,
+      "minutes": 35,
+      "ingredients": [
+        { "ingredientKey": "salmon_fillet", "qty": 0.5, "unit": "kg", "essential": true },
+        { "ingredientKey": "leek", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "potato", "qty": 0.6, "unit": "kg", "essential": true },
+        { "ingredientKey": "butter", "qty": 0.03, "unit": "kg", "essential": false },
+        { "ingredientKey": "lemon", "qty": 1, "unit": "each", "essential": false }
+      ],
+      "steps": [
+        "Heat the oven to 200C. Slice the potatoes 5mm thick and par boil 6 minutes.",
+        "Wash the leeks well and cut into thick rings.",
+        "Spread the potatoes and leeks in a tin, dot with butter, roast 15 minutes.",
+        "Sit the salmon on top, squeeze over the lemon, roast a further 12 minutes until the fish flakes."
+      ]
+    },
+    {
+      "id": "beef-chilli",
+      "title": "Beef chilli",
+      "servings": 4,
+      "minutes": 50,
+      "ingredients": [
+        { "ingredientKey": "beef_mince", "qty": 0.5, "unit": "kg", "essential": true },
+        { "ingredientKey": "kidney_bean_tin", "qty": 1, "unit": "each", "essential": true },
+        { "ingredientKey": "tomato_tin", "qty": 2, "unit": "each", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.2, "unit": "kg", "essential": true },
+        { "ingredientKey": "pepper_mixed", "qty": 0.2, "unit": "kg", "essential": false },
+        { "ingredientKey": "rice_basmati", "qty": 0.3, "unit": "kg", "essential": false }
+      ],
+      "steps": [
+        "Brown the mince hard in a dry pan, in two batches, so it colours instead of steaming.",
+        "Add the chopped onion and peppers, cook 8 minutes.",
+        "Add the tomatoes, a spoon of chilli powder and a spoon of cumin. Simmer 25 minutes.",
+        "Stir in the drained kidney beans, cook 10 minutes more. Serve with rice."
+      ]
+    },
+    {
+      "id": "chicken-fajitas",
+      "title": "Chicken fajitas",
+      "servings": 4,
+      "minutes": 30,
+      "ingredients": [
+        { "ingredientKey": "chicken_breast", "qty": 0.5, "unit": "kg", "essential": true },
+        { "ingredientKey": "pepper_mixed", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.2, "unit": "kg", "essential": true },
+        { "ingredientKey": "tortilla_wrap", "qty": 1, "unit": "pack", "essential": true },
+        { "ingredientKey": "cheddar", "qty": 0.08, "unit": "kg", "essential": false },
+        { "ingredientKey": "yoghurt_natural", "qty": 0.1, "unit": "kg", "essential": false },
+        { "ingredientKey": "lemon", "qty": 1, "unit": "each", "essential": false }
+      ],
+      "steps": [
+        "Cut the chicken, peppers and onion into strips of the same size.",
+        "Toss the chicken with paprika, cumin, salt and the juice of the lemon.",
+        "Fry the chicken in a very hot pan 6 minutes, lift it out, fry the vegetables 5 minutes.",
+        "Return the chicken, warm the wraps, serve with grated cheddar and yoghurt."
+      ]
+    },
+    {
+      "id": "broccoli-cheddar-soup",
+      "title": "Broccoli and cheddar soup",
+      "servings": 4,
+      "minutes": 30,
+      "ingredients": [
+        { "ingredientKey": "broccoli", "qty": 0.5, "unit": "kg", "essential": true },
+        { "ingredientKey": "potato", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "onion_brown", "qty": 0.15, "unit": "kg", "essential": true },
+        { "ingredientKey": "stock_chicken", "qty": 1, "unit": "pack", "essential": true },
+        { "ingredientKey": "cheddar", "qty": 0.1, "unit": "kg", "essential": false },
+        { "ingredientKey": "milk_whole", "qty": 0.2, "unit": "litre", "essential": false }
+      ],
+      "steps": [
+        "Soften the chopped onion in butter 6 minutes.",
+        "Add the diced potato and 1.2 litres of stock. Simmer 12 minutes.",
+        "Add the broccoli, stalk and all, chopped small. Cook 6 minutes, no longer, or the colour goes.",
+        "Blend, add the milk, then stir the grated cheddar in off the heat."
+      ]
+    },
+    {
+      "id": "sweet-potato-chickpea-bake",
+      "title": "Sweet potato and chickpea bake",
+      "servings": 4,
+      "minutes": 45,
+      "ingredients": [
+        { "ingredientKey": "sweet_potato", "qty": 0.8, "unit": "kg", "essential": true },
+        { "ingredientKey": "chickpea_tin", "qty": 2, "unit": "each", "essential": true },
+        { "ingredientKey": "feta", "qty": 0.2, "unit": "kg", "essential": true },
+        { "ingredientKey": "olive_oil", "qty": 0.03, "unit": "litre", "essential": false },
+        { "ingredientKey": "spinach", "qty": 0.1, "unit": "kg", "essential": false }
+      ],
+      "steps": [
+        "Heat the oven to 200C. Cut the sweet potato into 3cm chunks, skin on.",
+        "Drain the chickpeas and dry them on a cloth so they crisp.",
+        "Toss both with the oil, cumin and salt. Roast 35 minutes.",
+        "Fold the spinach through the hot tray, crumble the feta over, back in the oven 5 minutes."
+      ]
+    },
+    {
+      "id": "veg-fried-rice",
+      "title": "Vegetable fried rice",
+      "servings": 4,
+      "minutes": 25,
+      "ingredients": [
+        { "ingredientKey": "rice_basmati", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "egg", "qty": 3, "unit": "each", "essential": true },
+        { "ingredientKey": "carrot", "qty": 0.2, "unit": "kg", "essential": true },
+        { "ingredientKey": "broccoli", "qty": 0.2, "unit": "kg", "essential": true },
+        { "ingredientKey": "soy_sauce", "qty": 0.03, "unit": "litre", "essential": false },
+        { "ingredientKey": "scallion", "qty": 1, "unit": "pack", "essential": false }
+      ],
+      "steps": [
+        "Cook the rice, spread it on a tray and let it cool. Warm rice turns to paste in the pan.",
+        "Dice the carrot small and cut the broccoli into small florets. Fry 5 minutes in a hot pan.",
+        "Push the vegetables aside, scramble the eggs in the gap, then mix in.",
+        "Add the cold rice, fry hard 4 minutes, season with soy sauce and the sliced scallions."
+      ]
+    },
+    {
+      "id": "cheese-on-toast-with-tomato",
+      "title": "Cheese on toast with tomato",
+      "servings": 2,
+      "minutes": 10,
+      "ingredients": [
+        { "ingredientKey": "bread_white", "qty": 1, "unit": "each", "essential": true },
+        { "ingredientKey": "cheddar", "qty": 0.15, "unit": "kg", "essential": true },
+        { "ingredientKey": "tomato_vine", "qty": 0.2, "unit": "kg", "essential": false }
+      ],
+      "steps": [
+        "Toast four slices of bread on one side under a hot grill.",
+        "Turn them over, cover the untoasted side with thick grated cheddar right to the edges.",
+        "Grill 3 minutes until the cheese bubbles and browns in patches.",
+        "Slice the tomatoes, salt them, and put them on top."
+      ]
+    },
+    {
+      "id": "garlic-prawn-pasta",
+      "title": "Garlic prawn pasta",
+      "servings": 4,
+      "minutes": 20,
+      "ingredients": [
+        { "ingredientKey": "prawn_raw", "qty": 0.3, "unit": "kg", "essential": true },
+        { "ingredientKey": "pasta_penne", "qty": 0.4, "unit": "kg", "essential": true },
+        { "ingredientKey": "garlic", "qty": 1, "unit": "each", "essential": true },
+        { "ingredientKey": "lemon", "qty": 1, "unit": "each", "essential": false },
+        { "ingredientKey": "olive_oil", "qty": 0.04, "unit": "litre", "essential": false }
+      ],
+      "steps": [
+        "Boil the pasta in well salted water.",
+        "Slice four cloves of garlic thinly and warm them in the oil over a low heat until pale gold.",
+        "Raise the heat, add the prawns, cook 3 minutes until they turn opaque.",
+        "Drain the pasta, toss it through with a squeeze of lemon and some of the pasta water."
+      ]
+    }
+  ]
+}

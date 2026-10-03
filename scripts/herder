@@ -1,0 +1,140 @@
+#!/usr/bin/env node
+'use strict';
+
+// herder - show which panes and agents are in place for the AIWeek session.
+//
+// Snapshot semantics come from ECC's orchestration-session lib (vendored in
+// ./lib, MIT, see lib/LICENSE.ECC). Panes are matched to agents by tmux
+// pane_title == agent slug, so an agent only shows as attached if its pane
+// title is set correctly.
+
+const path = require('path');
+const { collectSessionSnapshot } = require('./lib/orchestration-session');
+
+const REPO_ROOT = path.resolve(__dirname, '..');
+const SESSION = process.env.HERDER_SESSION || 'aiweek';
+
+const C = process.stdout.isTTY && !process.env.NO_COLOR
+  ? { dim: '\x1b[2m', red: '\x1b[31m', grn: '\x1b[32m', yel: '\x1b[33m', cyn: '\x1b[36m', bold: '\x1b[1m', off: '\x1b[0m' }
+  : { dim: '', red: '', grn: '', yel: '', cyn: '', bold: '', off: '' };
+
+const STATE_COLOR = {
+  running: C.grn,
+  review: C.cyn,
+  blocked: C.red,
+  ready: C.yel,
+  backlog: C.dim,
+  merged: C.dim,
+};
+
+function pad(value, width) {
+  const text = value == null ? '' : String(value);
+  return text.length >= width ? text.slice(0, width) : text + ' '.repeat(width - text.length);
+}
+
+function renderAgents(workers) {
+  console.log(`${C.bold}AGENTS${C.off}`);
+
+  if (workers.length === 0) {
+    console.log(`  ${C.dim}none declared under .claude/orchestration/${SESSION}/${C.off}`);
+    return;
+  }
+
+  console.log(`  ${C.dim}${pad('AGENT', 12)}${pad('STATE', 10)}${pad('PANE', 8)}${pad('BRANCH', 30)}OBJECTIVE${C.off}`);
+
+  for (const worker of workers) {
+    const state = worker.status.state || 'unknown';
+    const color = STATE_COLOR[state] || '';
+    const pane = worker.pane
+      ? `${C.grn}${pad(worker.pane.paneId, 8)}${C.off}`
+      : `${C.red}${pad('—', 8)}${C.off}`;
+    const objective = (worker.task.objective || '').split('\n')[0] || `${C.dim}(no objective set)${C.off}`;
+
+    console.log(
+      `  ${pad(worker.workerSlug, 12)}${color}${pad(state, 10)}${C.off}${pane}` +
+      `${pad(worker.status.branch || '—', 30)}${objective}`
+    );
+  }
+}
+
+function renderPanes(snapshot) {
+  console.log(`\n${C.bold}PANES${C.off} ${C.dim}(tmux session "${snapshot.sessionName}")${C.off}`);
+
+  if (!snapshot.sessionActive) {
+    console.log(`  ${C.red}session not running${C.off} ${C.dim}— start it with: bash scripts/herder-up${C.off}`);
+    return;
+  }
+
+  const claimed = new Set(
+    snapshot.workers.filter(w => w.pane).map(w => w.pane.paneId)
+  );
+
+  console.log(`  ${C.dim}${pad('PANE', 8)}${pad('W.P', 6)}${pad('TITLE', 14)}${pad('CMD', 12)}PATH${C.off}`);
+
+  for (const pane of snapshot.panes) {
+    const unclaimed = !claimed.has(pane.paneId);
+    const title = pane.title || '';
+    // A pane whose title does not match an agent slug will never bind to an
+    // agent; flag it rather than letting it look healthy.
+    const mark = unclaimed ? `${C.yel} (unbound)${C.off}` : '';
+    const active = pane.active ? `${C.bold}*${C.off}` : ' ';
+
+    console.log(
+      `  ${active}${pad(pane.paneId, 7)}${pad(`${pane.windowIndex}.${pane.paneIndex}`, 6)}` +
+      `${pad(title, 14)}${pad(pane.currentCommand, 12)}${C.dim}${pane.currentPath}${C.off}${mark}`
+    );
+  }
+}
+
+function renderSummary(snapshot) {
+  const states = Object.entries(snapshot.workerStates)
+    .map(([state, count]) => `${state}=${count}`)
+    .join(' ') || 'none';
+
+  console.log(
+    `\n${C.dim}session=${snapshot.sessionName} active=${snapshot.sessionActive} ` +
+    `panes=${snapshot.paneCount} agents=${snapshot.workerCount} ${states}${C.off}`
+  );
+
+  const detached = snapshot.workers.filter(w => !w.pane).map(w => w.workerSlug);
+  if (detached.length > 0) {
+    console.log(`${C.yel}detached agents (declared, no pane): ${detached.join(', ')}${C.off}`);
+  }
+
+  // A shell's OSC title escape overwrites pane_title and unbinds every agent at
+  // once. That looks identical to "nothing is running", so name the real cause
+  // rather than letting it read as an empty session.
+  if (snapshot.sessionActive && detached.length === snapshot.workerCount && snapshot.workerCount > 0) {
+    const clobbered = snapshot.panes.some(p => /[@:]/.test(p.title || ''));
+    if (clobbered) {
+      console.log(
+        `${C.red}all agents detached while panes are live — pane titles look overwritten by the shell.${C.off}\n` +
+        `${C.dim}  fix: tmux set-option -w -t ${snapshot.sessionName}:herd allow-set-title off, then re-title the panes.${C.off}\n` +
+        `${C.dim}  (needs tmux >= 3.3; check with tmux -V)${C.off}`
+      );
+    }
+  }
+}
+
+function main() {
+  const asJson = process.argv.includes('--json');
+  const snapshot = collectSessionSnapshot(SESSION, REPO_ROOT);
+
+  if (asJson) {
+    console.log(JSON.stringify(snapshot, null, 2));
+    return;
+  }
+
+  renderAgents(snapshot.workers);
+  renderPanes(snapshot);
+  renderSummary(snapshot);
+}
+
+if (require.main === module) {
+  try {
+    main();
+  } catch (error) {
+    console.error(`[herder] ${error.message}`);
+    process.exit(1);
+  }
+}

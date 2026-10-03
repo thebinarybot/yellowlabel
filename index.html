@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FFE500">
+<meta name="description" content="This week's cheapest ingredients across Aldi, Dunnes Stores and Lidl in Ireland, and the recipes they make.">
+<title>Yellow Label</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./styles/label.css">
+</head>
+<body>
+<a class="skip" href="#offers">Skip to offers</a>
+
+<header class="masthead">
+  <div class="masthead__row">
+    <p class="stamp stamp--week" id="week-stamp">WEEK</p>
+    <p class="masthead__stores">ALDI &middot; DUNNES &middot; LIDL</p>
+  </div>
+  <h1 class="masthead__title">This week, cheapest first</h1>
+  <p class="masthead__sub">Offers across three Irish supermarkets, and what they cook. Prices in EUR.</p>
+  <p class="snapshot" id="snapshot-note">Loading the snapshot.</p>
+</header>
+
+<main>
+  <section class="section" id="offers" aria-labelledby="offers-head">
+    <div class="section__head">
+      <h2 id="offers-head">Offers</h2>
+      <p class="section__count" id="offer-count" role="status"></p>
+    </div>
+
+    <div class="controls">
+      <fieldset class="control">
+        <legend class="control__legend">Store</legend>
+        <div class="segment" id="store-filter"></div>
+      </fieldset>
+      <div class="control">
+        <label class="control__legend" for="sort-select">Sort</label>
+        <select id="sort-select" class="select">
+          <option value="price">Shelf price, low to high</option>
+          <option value="unit">Unit price, low to high</option>
+          <option value="saving">Saving, high to low</option>
+          <option value="store">Store, then price</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="section__note">Yellow labels are the cheapest offer for that ingredient this week. Unit price compares like with like inside one ingredient only, so a "per kg" and an "each" price sorted together are not the same measure.</p>
+
+    <ul class="grid" id="offer-grid"></ul>
+    <p class="empty" id="offer-empty" hidden>No offers match that filter.</p>
+  </section>
+
+  <hr class="barcode" aria-hidden="true">
+
+  <section class="section" id="recipes" aria-labelledby="recipes-head">
+    <div class="section__head">
+      <h2 id="recipes-head">What that cooks</h2>
+      <p class="section__count" id="recipe-count" role="status"></p>
+    </div>
+    <p class="section__note">Cost is the cheapest offer per ingredient this week, scaled by the amount the recipe needs. Ingredients with no offer are priced at zero and called out on the line.</p>
+    <ul class="recipes" id="recipe-list"></ul>
+  </section>
+</main>
+
+<footer class="footer">
+  <hr class="barcode" aria-hidden="true">
+  <p class="footer__line" id="footer-source">Source pending.</p>
+  <p class="footer__line footer__line--small">Seeded snapshot behind a StoreAdapter. No live scrape is wired. Prices and recipes only, no nutrition or allergen advice.</p>
+</footer>
+
+<script type="module" src="./src/ui/app.js"></script>
+</body>
+</html>

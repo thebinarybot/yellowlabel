@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# herder-launch - start a Claude session in an agent's pane with its briefing.
+#
+#   bash scripts/herder-launch data
+#   bash scripts/herder-launch app
+#   bash scripts/herder-launch all
+#
+# Deliberately manual. Launching an agent spends tokens, so nothing starts on
+# its own: you choose when each pane goes live.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SESSION="${HERDER_SESSION:-aiweek}"
+COORD_DIR="$REPO_ROOT/.claude/orchestration/$SESSION"
+
+if [ $# -lt 1 ]; then
+  echo "usage: herder-launch <agent-slug|all>" >&2
+  exit 1
+fi
+
+if ! tmux has-session -t "$SESSION" 2>/dev/null; then
+  echo "herder-launch: session '$SESSION' is not running. Start it with: bash scripts/herder-up" >&2
+  exit 1
+fi
+
+briefing() {
+  local slug="$1"
+  cat <<EOF
+You are the '$slug' agent on the AIWeek prototype. Read PROBLEM.md in full
+first: it carries the system prompt you operate under, the frozen data
+contract, and the writing and visual rules. Then read AGENTS.md for your scope,
+then .claude/orchestration/$SESSION/$slug/task.md for your objective.
+
+Hard rules: stay inside the files you own, do not edit the data contract
+alone, and obey the writing rules (no em dashes, no banned words, no emoji)
+and the shelf edge label visual direction.
+
+Set your State to running in
+.claude/orchestration/$SESSION/$slug/status.md before you start, and fill in
+handoff.md when you finish. There is a 90 minute budget, so prefer a working
+narrow slice over a broad unfinished one.
+
+Begin.
+EOF
+}
+
+launch_one() {
+  local slug="$1"
+
+  if [ ! -d "$COORD_DIR/$slug" ]; then
+    echo "herder-launch: no agent '$slug' under $COORD_DIR" >&2
+    return 1
+  fi
+
+  # Find the pane by title, which is the same key herder binds on.
+  local pane
+  pane="$(tmux list-panes -t "$SESSION" -F '#{pane_id} #{pane_title}' \
+    | awk -v s="$slug" '$2 == s { print $1; exit }')"
+
+  if [ -z "$pane" ]; then
+    echo "herder-launch: no pane titled '$slug'. Run: node scripts/herder" >&2
+    return 1
+  fi
+
+  # Single-quote the briefing safely for the remote shell.
+  local prompt
+  prompt="$(briefing "$slug" | sed "s/'/'\\\\''/g")"
+
+  tmux send-keys -t "$pane" "clear; claude '$prompt'" C-m
+  echo "herder-launch: '$slug' launched in pane $pane"
+}
+
+if [ "$1" = "all" ]; then
+  find "$COORD_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | while read -r slug; do
+    launch_one "$slug" || true
+  done
+else
+  launch_one "$1"
+fi

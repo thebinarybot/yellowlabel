@@ -1,0 +1,207 @@
+{
+  "chicken_thigh": {
+    "label": "Chicken thighs",
+    "category": "protein",
+    "unit": "kg"
+  },
+  "chicken_breast": {
+    "label": "Chicken breasts",
+    "category": "protein",
+    "unit": "kg"
+  },
+  "beef_mince": {
+    "label": "Beef mince",
+    "category": "protein",
+    "unit": "kg"
+  },
+  "pork_sausage": {
+    "label": "Pork sausages",
+    "category": "protein",
+    "unit": "kg"
+  },
+  "bacon_rasher": {
+    "label": "Bacon rashers",
+    "category": "protein",
+    "unit": "kg"
+  },
+  "salmon_fillet": {
+    "label": "Salmon fillets",
+    "category": "protein",
+    "unit": "kg"
+  },
+  "prawn_raw": {
+    "label": "Raw prawns",
+    "category": "protein",
+    "unit": "kg"
+  },
+  "egg": {
+    "label": "Eggs",
+    "category": "protein",
+    "unit": "each"
+  },
+  "onion_brown": {
+    "label": "Brown onions",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "carrot": {
+    "label": "Carrots",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "potato": {
+    "label": "Potatoes",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "sweet_potato": {
+    "label": "Sweet potatoes",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "broccoli": {
+    "label": "Broccoli",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "mushroom_chestnut": {
+    "label": "Chestnut mushrooms",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "pepper_mixed": {
+    "label": "Mixed peppers",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "tomato_vine": {
+    "label": "Vine tomatoes",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "garlic": {
+    "label": "Garlic",
+    "category": "veg",
+    "unit": "each"
+  },
+  "spinach": {
+    "label": "Spinach",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "scallion": {
+    "label": "Scallions",
+    "category": "veg",
+    "unit": "pack"
+  },
+  "leek": {
+    "label": "Leeks",
+    "category": "veg",
+    "unit": "kg"
+  },
+  "apple_gala": {
+    "label": "Gala apples",
+    "category": "fruit",
+    "unit": "kg"
+  },
+  "lemon": {
+    "label": "Lemons",
+    "category": "fruit",
+    "unit": "each"
+  },
+  "cheddar": {
+    "label": "Cheddar",
+    "category": "dairy",
+    "unit": "kg"
+  },
+  "butter": {
+    "label": "Butter",
+    "category": "dairy",
+    "unit": "kg"
+  },
+  "milk_whole": {
+    "label": "Whole milk",
+    "category": "dairy",
+    "unit": "litre"
+  },
+  "cream_single": {
+    "label": "Single cream",
+    "category": "dairy",
+    "unit": "litre"
+  },
+  "yoghurt_natural": {
+    "label": "Natural yoghurt",
+    "category": "dairy",
+    "unit": "kg"
+  },
+  "feta": {
+    "label": "Feta",
+    "category": "dairy",
+    "unit": "kg"
+  },
+  "rice_basmati": {
+    "label": "Basmati rice",
+    "category": "pantry",
+    "unit": "kg"
+  },
+  "pasta_penne": {
+    "label": "Penne pasta",
+    "category": "pantry",
+    "unit": "kg"
+  },
+  "tomato_tin": {
+    "label": "Chopped tomatoes",
+    "category": "pantry",
+    "unit": "each"
+  },
+  "chickpea_tin": {
+    "label": "Chickpeas",
+    "category": "pantry",
+    "unit": "each"
+  },
+  "kidney_bean_tin": {
+    "label": "Kidney beans",
+    "category": "pantry",
+    "unit": "each"
+  },
+  "coconut_milk": {
+    "label": "Coconut milk",
+    "category": "pantry",
+    "unit": "each"
+  },
+  "stock_chicken": {
+    "label": "Chicken stock cubes",
+    "category": "pantry",
+    "unit": "pack"
+  },
+  "olive_oil": {
+    "label": "Olive oil",
+    "category": "pantry",
+    "unit": "litre"
+  },
+  "lentil_red": {
+    "label": "Red lentils",
+    "category": "pantry",
+    "unit": "kg"
+  },
+  "curry_paste": {
+    "label": "Curry paste",
+    "category": "pantry",
+    "unit": "each"
+  },
+  "soy_sauce": {
+    "label": "Soy sauce",
+    "category": "pantry",
+    "unit": "litre"
+  },
+  "tortilla_wrap": {
+    "label": "Tortilla wraps",
+    "category": "bakery",
+    "unit": "pack"
+  },
+  "bread_white": {
+    "label": "White sliced pan",
+    "category": "bakery",
+    "unit": "each"
+  }
+}

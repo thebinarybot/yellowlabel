@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# herder-up - create the AIWeek tmux session with one titled pane per agent.
+#
+# Pane titles MUST equal the agent slug: that is the only key ECC's snapshot
+# logic uses to bind a pane to an agent. A mistyped title shows as "unbound"
+# in `herder`.
+#
+# Panes are left at a shell showing the agent's objective. Starting the actual
+# agent is deliberate, not automatic - launch it yourself in the pane.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SESSION="${HERDER_SESSION:-aiweek}"
+COORD_DIR="$REPO_ROOT/.claude/orchestration/$SESSION"
+
+if ! command -v tmux >/dev/null 2>&1; then
+  echo "herder-up: tmux is not installed" >&2
+  exit 1
+fi
+
+if [ ! -d "$COORD_DIR" ]; then
+  echo "herder-up: no coordination dir at $COORD_DIR" >&2
+  exit 1
+fi
+
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  echo "herder-up: session '$SESSION' already exists - attach with: tmux attach -t $SESSION"
+  exit 0
+fi
+
+# Agent roster is whatever is declared on disk, so adding an agent dir is
+# enough to give it a pane on the next up.
+mapfile -t AGENTS < <(find "$COORD_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
+
+if [ ${#AGENTS[@]} -eq 0 ]; then
+  echo "herder-up: no agents declared under $COORD_DIR" >&2
+  exit 1
+fi
+
+pane_cmd() {
+  local slug="$1"
+  local task_file="$COORD_DIR/$slug/task.md"
+  printf 'clear; echo "=== agent: %s ==="; [ -f %q ] && sed -n "1,40p" %q; exec "$SHELL"' \
+    "$slug" "$task_file" "$task_file"
+}
+
+# Window 0 pane 0 is the control pane - yours, not an agent's.
+tmux new-session -d -s "$SESSION" -n herd -c "$REPO_ROOT"
+
+# Lock titles BEFORE any shell runs. An interactive shell emits an OSC title
+# escape on every prompt, which overwrites pane_title - and pane_title is the
+# only key binding an agent to its pane. Without this, every agent silently
+# goes unbound the moment you type in its pane.
+tmux set-option -w -t "$SESSION:herd" allow-set-title off >/dev/null 2>&1 || true
+tmux set-option -w -t "$SESSION:herd" automatic-rename off >/dev/null 2>&1 || true
+
+# Mouse navigation and clipboard. Sourced here so it survives a teardown.
+if [ -f "$REPO_ROOT/.tmux.conf" ]; then
+  tmux source-file "$REPO_ROOT/.tmux.conf" >/dev/null 2>&1 \
+    || echo "herder-up: warning - .tmux.conf failed to load; mouse will be off" >&2
+fi
+
+tmux select-pane -t "$SESSION:herd.0" -T control
+tmux send-keys -t "$SESSION:herd.0" \
+  "clear; echo '=== control pane ==='; node scripts/herder" C-m
+
+for slug in "${AGENTS[@]}"; do
+  tmux split-window -t "$SESSION:herd" -c "$REPO_ROOT"
+  tmux select-pane -t "$SESSION:herd" -T "$slug"
+  tmux send-keys -t "$SESSION:herd" "$(pane_cmd "$slug")" C-m
+  tmux select-layout -t "$SESSION:herd" tiled >/dev/null
+done
+
+# Make titles visible on the pane borders, otherwise the binding key is invisible.
+tmux set-option -t "$SESSION" -g pane-border-status top >/dev/null 2>&1 || true
+tmux set-option -t "$SESSION" -g pane-border-format ' #{pane_title} ' >/dev/null 2>&1 || true
+
+tmux select-pane -t "$SESSION:herd.0"
+
+echo "herder-up: session '$SESSION' created with ${#AGENTS[@]} agent pane(s) + control"
+echo "  attach:  tmux attach -t $SESSION"
+echo "  status:  node scripts/herder"

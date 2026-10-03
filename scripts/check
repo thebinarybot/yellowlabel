@@ -1,0 +1,173 @@
+#!/usr/bin/env node
+'use strict';
+
+// check - verify the build against PROBLEM.md: the frozen data contract and
+// the writing and visual rules. Tooling, owned by neither agent.
+//
+//   node scripts/check
+
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.resolve(__dirname, '..');
+const C = process.stdout.isTTY && !process.env.NO_COLOR
+  ? { red: '\x1b[31m', grn: '\x1b[32m', yel: '\x1b[33m', dim: '\x1b[2m', bold: '\x1b[1m', off: '\x1b[0m' }
+  : { red: '', grn: '', yel: '', dim: '', bold: '', off: '' };
+
+const problems = [];
+const notes = [];
+const fail = m => problems.push(m);
+const note = m => notes.push(m);
+
+function readJson(rel) {
+  const p = path.join(ROOT, rel);
+  if (!fs.existsSync(p)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch (error) {
+    fail(`${rel} is not valid JSON: ${error.message}`);
+    return null;
+  }
+}
+
+// --- data contract -----------------------------------------------------
+
+const REQUIRED_OFFER_FIELDS = [
+  'id', 'store', 'ingredientKey', 'name', 'size',
+  'price', 'unitPrice', 'unitLabel', 'validTo'
+];
+const STORES = ['ALDI', 'DUNNES', 'LIDL'];
+
+function checkData() {
+  const ing = readJson('data/ingredients.json');
+  const off = readJson('data/offers.json');
+  const rec = readJson('data/recipes.json');
+
+  if (!ing) return fail('data/ingredients.json missing');
+  if (!off) return fail('data/offers.json missing');
+  if (!rec) return fail('data/recipes.json missing');
+
+  for (const key of ['week', 'capturedAt', 'source', 'currency', 'offers']) {
+    if (!(key in off)) fail(`offers.json missing top level "${key}"`);
+  }
+
+  if (!Array.isArray(off.offers)) return fail('offers.json "offers" is not an array');
+
+  const seen = new Set();
+  for (const o of off.offers) {
+    for (const k of REQUIRED_OFFER_FIELDS) {
+      if (!(k in o)) fail(`offer ${o.id || '(no id)'} missing "${k}"`);
+    }
+    if (!STORES.includes(o.store)) fail(`offer ${o.id} has store "${o.store}", expected one of ${STORES.join(', ')}`);
+    if (!ing[o.ingredientKey]) fail(`offer ${o.id} uses ingredientKey "${o.ingredientKey}" which is not in the vocabulary`);
+    if (seen.has(o.id)) fail(`duplicate offer id "${o.id}"`);
+    seen.add(o.id);
+    if (typeof o.price === 'number' && o.wasPrice != null && o.wasPrice <= o.price) {
+      fail(`offer ${o.id} has wasPrice ${o.wasPrice} not above price ${o.price}`);
+    }
+  }
+
+  // Every essential recipe ingredient must be buyable, or the recipe can never
+  // surface and the matching rule is silently broken.
+  const offered = new Set(off.offers.map(o => o.ingredientKey));
+  let makeable = 0;
+
+  for (const r of rec.recipes || []) {
+    if (!r.steps || r.steps.length === 0) fail(`recipe ${r.id} has no steps`);
+    if (!r.servings || !r.minutes) fail(`recipe ${r.id} missing servings or minutes`);
+    for (const i of r.ingredients || []) {
+      if (!ing[i.ingredientKey]) fail(`recipe ${r.id} uses unknown ingredientKey "${i.ingredientKey}"`);
+    }
+    const essentials = (r.ingredients || []).filter(i => i.essential);
+    if (essentials.every(i => offered.has(i.ingredientKey))) makeable += 1;
+  }
+
+  note(`${off.offers.length} offers, ${(rec.recipes || []).length} recipes, ${Object.keys(ing).length} ingredients`);
+  note(`${makeable} recipe(s) makeable from this week's offers`);
+
+  if (makeable === 0 && (rec.recipes || []).length > 0) {
+    fail('no recipe is makeable from the current offers, so the core flow renders empty');
+  }
+  if (off.source !== 'seed') {
+    note(`offers.json source is "${off.source}" - if that is not live scraped data, it should say seed`);
+  }
+}
+
+// --- writing and visual rules -----------------------------------------
+
+const BANNED = [
+  'delve', 'seamless', 'seamlessly', 'effortless', 'effortlessly', 'elevate',
+  'unlock', 'unleash', 'revolutionise', 'revolutionize', 'revolutionary',
+  'game changer', 'game-changing', 'cutting edge', 'cutting-edge',
+  'state of the art', 'state-of-the-art', 'empower', 'transform your',
+  'dive in', 'look no further', 'fast paced world', "it's worth noting",
+  'navigate the landscape', 'tailored to your needs', 'curated selection'
+];
+
+function walk(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (['node_modules', '.git', 'worktrees', 'scripts', '.claude'].includes(e.name)) continue;
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) walk(p, out);
+    else if (/\.(html|css|js|ts|webmanifest|json)$/.test(e.name)) out.push(p);
+  }
+  return out;
+}
+
+function checkProse() {
+  // PROBLEM.md lists the banned words, so scanning it would always fail.
+  const files = walk(ROOT).filter(f => !f.includes(`${path.sep}data${path.sep}`) || /\.json$/.test(f));
+
+  for (const f of files) {
+    const rel = path.relative(ROOT, f);
+    const text = fs.readFileSync(f, 'utf8');
+    const lower = text.toLowerCase();
+
+    for (const word of BANNED) {
+      if (lower.includes(word)) fail(`${rel} contains banned word "${word}"`);
+    }
+    if (text.includes('—')) fail(`${rel} contains an em dash`);
+    if (/[\u{1F300}-\u{1FAFF}\u{2700}-\u{27BF}]/u.test(text)) fail(`${rel} contains emoji`);
+
+    if (/\.(css|html)$/.test(f)) {
+      const m = text.match(/border-radius\s*:\s*([^;}\n]+)/g) || [];
+      for (const decl of m) {
+        if (!/:\s*0(px|rem|%)?\s*$/.test(decl)) fail(`${rel} sets ${decl.trim()}, but the direction is hard edges only`);
+      }
+      // repeating-linear-gradient with hard stops is how you draw a barcode or
+      // a stripe in CSS, which the direction explicitly asks for. Only smooth
+      // gradients and blur are out.
+      const soft = text
+        .replace(/repeating-(linear|radial|conic)-gradient/g, '')
+        .match(/\b(linear|radial|conic)-gradient|backdrop-filter/g);
+      if (soft) {
+        fail(`${rel} uses ${[...new Set(soft)].join(', ')}, which the visual direction rules out`);
+      }
+    }
+  }
+}
+
+// --- shell -------------------------------------------------------------
+
+function checkShell() {
+  for (const f of ['index.html', 'manifest.webmanifest', 'sw.js']) {
+    if (!fs.existsSync(path.join(ROOT, f))) note(`${f} not written yet`);
+  }
+}
+
+checkData();
+checkProse();
+checkShell();
+
+console.log(`${C.bold}AIWeek check${C.off}`);
+for (const n of notes) console.log(`  ${C.dim}- ${n}${C.off}`);
+
+if (problems.length === 0) {
+  console.log(`${C.grn}  PASS${C.off} no contract or style violations`);
+  process.exit(0);
+}
+
+console.log(`${C.red}  ${problems.length} problem(s)${C.off}`);
+for (const p of problems) console.log(`  ${C.red}x${C.off} ${p}`);
+process.exit(1);
