@@ -36,7 +36,7 @@ makeable first, then cheapest per serving:
 | `cost` | Sum of the matched lines, in EUR. |
 | `costIsPartial` | True when something is not on offer, so `cost` is not the price of the finished dish. Do not print it as a total when this is set. |
 | `essentialCost` | Same sum over essential lines only. |
-| `costPerServing` | `cost / recipe.servings`. |
+| `costPerServing` | `cost / recipe.servings`, worked from the unrounded sum so it does not drift a cent from `cost`. |
 | `saving` | Sum of line savings against each offer's own previous price. Zero where no previous price was published. |
 | `storeSplit[]` | `{ store, lines, subtotal }`, biggest spend first. Answers "is this one shop or three". |
 | `storeCount` | `storeSplit.length`. |
@@ -56,13 +56,21 @@ It ranks on percentage rather than unit price on purpose. See the note below.
 ## Other helpers
 
 - `sortOffers(offers, key)`, non mutating. Keys: `price`, `unitPrice`,
-  `saving`, `store`, `name`. Default `unitPrice`.
+  `saving`, `savingPct`, `store`, `name`. Default `unitPrice`.
 - `cheapestByIngredient(offers)` returns a `Map` of key to the single
   cheapest offer, compared on `unitPrice`.
 - `offersByIngredient(offers)` returns a `Map` of key to every offer for it,
   cheapest first. Use this for a "same item, other stores" row.
 - `bestDeals(offers, ingredients)`, described above.
 - `unitSaving(offer)` is the per unit drop against `wasPrice`, or `0`.
+- `savingPct(offer)` is the rounded percentage drop against `wasPrice`, or
+  `0`. `sortOffers(offers, 'savingPct')` ranks by it, biggest first.
+- `packQty(offer)` is how much one pack holds in the ingredient's unit,
+  worked out as `price / unitPrice`.
+- `scaleRecipe(priced, servings)` takes one `costRecipes` result and returns
+  `{ servings, factor, lines, total, perServing, saving, packTotal }` for that
+  many servings. Each line adds `wasCost`, `packs` and `packCost`. The lines
+  add up to `total` exactly, and `perServing` does not change with servings.
 - `round2(n)` for cent safe money arithmetic.
 - `STORES` is `['ALDI', 'DUNNES', 'LIDL', 'TESCO']` in display order.
 
@@ -72,7 +80,7 @@ All of these are pure. No DOM, no fetch.
 
 Compare on `unitPrice`, not `price`. A 5kg bag of potatoes at 3.99 beats a
 2kg bag at 1.99, and only `unitPrice` shows that. `price` and `size` are what
-is printed on the shelf, so show those too.
+the shop prints, so show those too.
 
 `unitPrice` is only comparable within one unit. Sorting all 72 offers by it
 puts eggs at 0.25 each above beef mince at 6.98 per kg, which tells a user
@@ -86,6 +94,8 @@ list, use `bestDeals` or `sortOffers(offers, 'saving')`.
 - `data/recipes.json`
 - `src/adapters/index.js`, `store-adapter.js`, `seed-adapter.js`,
   `live-adapter.js`, `matching.js`
+
+`sw.js` lists all of these.
 
 `data/validate.mjs` is a Node check, not shipped to the browser. Do not cache it.
 

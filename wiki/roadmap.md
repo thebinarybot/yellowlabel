@@ -32,17 +32,15 @@ supplies, which keeps the app static and sidesteps both problems.
 
 ## Pack rounding in costing
 
-Costing currently uses the quantity a recipe needs, not whole packs. A recipe
+The headline cost is the quantity a recipe uses, not whole packs. A recipe
 wanting one garlic bulb is costed at 0.30, but the shop sells a three pack for
 0.89.
 
-The totals are therefore the cost of the ingredients used, not the cost of the
-shop, which is always higher. It is consistent across all 14 recipes and each
-line shows the pack size, but the number is optimistic.
-
-Fixing it means ceiling each ingredient to whole packs and showing both
-numbers: what the meal uses, and what the trip costs. That second number is
-arguably the more useful one, and it changes which recipes look cheapest.
+The recipe page now shows both numbers: what the meal uses, and what the full
+packs cost, with a toggle for the pack price on each line. The cards and the
+cost filter still use the amount used. Which one should lead is an open
+question in the design handover, and the answer changes which recipes look
+cheapest.
 
 ## Savings ranking
 

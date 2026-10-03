@@ -96,11 +96,13 @@ export function costRecipe(recipe, best, ingredients) {
   }
   const storeSplit = [...byStore.values()].sort((a, b) => b.subtotal - a.subtotal);
 
-  const cost = round2(matched.reduce((sum, line) => sum + line.lineCost, 0));
-  const essentialCost = round2(
-    matched.filter((l) => l.essential).reduce((sum, line) => sum + line.lineCost, 0),
-  );
-  const saving = round2(matched.reduce((sum, line) => sum + line.lineSaving, 0));
+  // Totals add the unrounded line costs and round once, so a cost per
+  // serving times the servings lands on the total instead of drifting.
+  const exact = (list, per) => round2(list.reduce((sum, line) => sum + per(line.offer) * line.qty, 0));
+  const cost = exact(matched, (offer) => offer.unitPrice);
+  const essentialCost = exact(matched.filter((l) => l.essential), (offer) => offer.unitPrice);
+  const saving = exact(matched, unitSaving);
+  const rawCost = matched.reduce((sum, line) => sum + line.offer.unitPrice * line.qty, 0);
 
   return {
     recipe,
@@ -110,7 +112,7 @@ export function costRecipe(recipe, best, ingredients) {
     cost,
     costIsPartial: missing.length > 0,
     essentialCost,
-    costPerServing: recipe.servings ? round2(cost / recipe.servings) : null,
+    costPerServing: recipe.servings ? round2(rawCost / recipe.servings) : null,
     saving,
     storeSplit,
     storeCount: storeSplit.length,
@@ -153,10 +155,105 @@ export function bestDeals(offers, ingredients) {
         label: meta ? meta.label : key,
         category: meta ? meta.category : 'other',
         saving: round2(unitSaving(offer)),
-        savingPct: offer.wasPrice ? Math.round((1 - offer.price / offer.wasPrice) * 100) : 0,
+        savingPct: savingPct(offer),
       };
     })
     .sort((a, b) => b.savingPct - a.savingPct || a.label.localeCompare(b.label));
+}
+
+/** Percentage drop against the previous price, rounded. 0 when there is none. */
+export function savingPct(offer) {
+  if (offer.wasPrice == null || !(offer.wasPrice > offer.price)) return 0;
+  return Math.round((1 - offer.price / offer.wasPrice) * 100);
+}
+
+/**
+ * How much one pack holds, in the ingredient's own unit (kg, litre, each or
+ * pack). Worked out from price over unit price, so a "2 x 400g" size string
+ * never needs parsing: 2.49 at 2.49 per kg is a 1 kg pack.
+ */
+export function packQty(offer) {
+  if (!offer || !(offer.unitPrice > 0)) return null;
+  return Math.round((offer.price / offer.unitPrice) * 1000) / 1000;
+}
+
+/**
+ * A costed recipe rescaled to a number of servings, for the detail page.
+ *
+ * Per serving cost stays the recipe's own, because the amounts scale with
+ * the servings. The total adds the unrounded lines and rounds once, so the
+ * total for one serving is the per serving price. The cents of that total
+ * are then shared out across the lines by largest remainder, so the printed
+ * lines always add up to the printed total and each is within a cent of its
+ * exact cost.
+ *
+ * packCost is what the whole packs cost at the till: packs needed is the
+ * amount used over the pack size, rounded up, never fewer than one.
+ *
+ * @param {ReturnType<typeof costRecipe>} priced
+ * @param {number} servings
+ */
+export function scaleRecipe(priced, servings) {
+  const base = priced.recipe.servings || 1;
+  const factor = servings / base;
+
+  const lines = priced.lines.map((line) => {
+    const qty = line.qty * factor;
+    if (!line.offer) {
+      return { ...line, qty, lineCost: null, lineSaving: 0, wasCost: null, packs: 0, packCost: null };
+    }
+    const lineCost = round2(line.offer.unitPrice * qty);
+    const lineSaving = round2(unitSaving(line.offer) * qty);
+    const size = packQty(line.offer);
+    const packs = size ? Math.max(1, Math.ceil(qty / size - 1e-9)) : 1;
+    return {
+      ...line,
+      qty,
+      lineCost,
+      lineSaving,
+      wasCost: lineSaving > 0 ? round2(lineCost + lineSaving) : null,
+      packs,
+      packCost: round2(packs * line.offer.price),
+    };
+  });
+
+  const onOffer = lines.filter((line) => line.offer);
+  const exact = (per) => round2(onOffer.reduce((sum, line) => sum + per(line.offer) * line.qty, 0));
+  const total = exact((offer) => offer.unitPrice);
+  apportion(onOffer, total);
+
+  return {
+    servings,
+    factor,
+    lines,
+    total,
+    perServing: priced.costPerServing,
+    saving: exact(unitSaving),
+    packTotal: round2(onOffer.reduce((sum, line) => sum + line.packCost, 0)),
+  };
+}
+
+/**
+ * Set each line's lineCost so the lines add up to total exactly: every line
+ * gets its exact cost rounded down to the cent, then the cents left over go
+ * to the lines that lost the most in rounding.
+ */
+function apportion(lines, total) {
+  const exactCents = lines.map((line) => line.offer.unitPrice * line.qty * 100);
+  const cents = exactCents.map((c) => Math.floor(c + 1e-9));
+  let left = Math.round(total * 100) - cents.reduce((a, b) => a + b, 0);
+  const order = exactCents
+    .map((c, i) => [c - cents[i], i])
+    .sort((a, b) => b[0] - a[0]);
+  for (const [, i] of order) {
+    if (left <= 0) break;
+    cents[i] += 1;
+    left -= 1;
+  }
+  lines.forEach((line, i) => {
+    line.lineCost = cents[i] / 100;
+    if (line.wasCost != null) line.wasCost = round2(line.lineCost + line.lineSaving);
+  });
 }
 
 // Sort keys the UI can offer without writing its own comparators.
@@ -168,6 +265,7 @@ export const OFFER_SORTS = {
   price: (a, b) => a.price - b.price,
   unitPrice: (a, b) => a.unitPrice - b.unitPrice,
   saving: (a, b) => unitSaving(b) - unitSaving(a),
+  savingPct: (a, b) => savingPct(b) - savingPct(a) || a.price - b.price,
   store: (a, b) => a.store.localeCompare(b.store) || a.unitPrice - b.unitPrice,
   name: (a, b) => a.name.localeCompare(b.name),
 };

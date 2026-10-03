@@ -1,14 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Price label">
-  <rect width="512" height="512" fill="#FFE500"/>
-  <rect x="26" y="26" width="460" height="460" fill="none" stroke="#111111" stroke-width="26"/>
-  <text x="256" y="300" fill="#E3000F" font-family="Archivo Narrow, Arial Narrow, Helvetica, Arial, sans-serif" font-size="230" font-weight="800" text-anchor="middle" letter-spacing="-8">2.49</text>
-  <g fill="#111111">
-    <rect x="70" y="356" width="14" height="86"/><rect x="96" y="356" width="7" height="86"/>
-    <rect x="115" y="356" width="21" height="86"/><rect x="148" y="356" width="7" height="86"/>
-    <rect x="167" y="356" width="14" height="86"/><rect x="193" y="356" width="28" height="86"/>
-    <rect x="233" y="356" width="7" height="86"/><rect x="252" y="356" width="14" height="86"/>
-    <rect x="278" y="356" width="21" height="86"/><rect x="311" y="356" width="7" height="86"/>
-    <rect x="330" y="356" width="14" height="86"/><rect x="356" y="356" width="7" height="86"/>
-    <rect x="375" y="356" width="28" height="86"/><rect x="415" y="356" width="14" height="86"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Yellow Label">
+  <rect width="512" height="512" fill="#F7F5EF"/>
+  <!-- The cross mark from the header, scaled to sit inside the maskable safe zone. -->
+  <g transform="translate(256 256) scale(12) translate(-14 -14)">
+    <rect x="14" y="2" width="4" height="12" rx="1" fill="#0B5D3B"/>
+    <rect x="14" y="14" width="12" height="4" rx="1" fill="#0B5D3B"/>
+    <rect x="10" y="14" width="4" height="12" rx="1" fill="#0B5D3B"/>
+    <rect x="2" y="10" width="12" height="4" rx="1" fill="#0B5D3B"/>
+    <rect x="11" y="11" width="6" height="6" fill="#C8721D"/>
   </g>
 </svg>

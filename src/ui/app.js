@@ -1,18 +1,40 @@
-// Entry point. Reads through the StoreAdapter, never from a JSON file
-// directly, so a live source can replace the seed without touching the UI.
+// Entry point and router. Reads through the StoreAdapter, never from a JSON
+// file directly, so a live source can replace the seed without touching the
+// UI.
+//
+// Routes are hashes (#/offers, #/recipes, #/recipes/<id>) because a plain
+// static server has no fallback that sends unknown paths to index.html.
 
-import { SeedAdapter } from '../adapters/seed-adapter.js';
-import { longDate, plural, storesInOffers, weekLabel } from './format.js';
-import { indexOffers, bestOfferIds, costAll } from './match.js';
-import { renderOffers, renderStorePicker, syncStorePicker } from './offers.js';
-import { renderRecipes } from './recipes.js';
+import { getAdapter, costRecipes, cheapestByIngredient } from '../adapters/index.js';
+import { longDate, storesInOffers } from './format.js';
 import { DEFAULTS, loadPrefs, savePrefs, clearPrefs } from './prefs.js';
+import { renderOffers } from './offers.js';
+import { renderRecipes } from './recipes.js';
+import { renderRecipe } from './recipe.js';
 
-const el = (id) => document.getElementById(id);
+const view = document.getElementById('view');
+
+// Filter choices live here, not in the views, so they survive a trip to a
+// recipe and back, and are saved so they survive a visit.
+let state = null;
+let ctx = null;
+let firstRoute = true;
+
+function stateFrom(prefs, present) {
+  return {
+    stores: new Set(present.filter((s) => !prefs.storesOff.includes(s))),
+    search: prefs.search,
+    category: prefs.category,
+    sort: prefs.sort,
+    maxCost: prefs.maxCost,
+    maxMinutes: prefs.maxMinutes,
+    servings: prefs.servings,
+    recipeSort: prefs.recipeSort,
+  };
+}
 
 async function boot() {
-  const adapter = new SeedAdapter('./data');
-
+  const adapter = getAdapter('seed', { basePath: './data' });
   let ingredients;
   let snapshot;
   let bank;
@@ -23,146 +45,103 @@ async function boot() {
     return;
   }
 
-  const offers = snapshot.offers ?? [];
-  const recipes = bank.recipes ?? [];
+  const allOffers = snapshot.offers ?? [];
   // The store list comes from the data, so a store added to the snapshot
   // appears in the picker on its own.
-  const present = storesInOffers(offers);
+  const present = storesInOffers(allOffers);
+  state = stateFrom(loadPrefs(), present);
 
-  const saved = loadPrefs();
-  const state = {
-    stores: new Set(present.filter((s) => !saved.storesOff.includes(s))),
-    search: saved.search,
-    sort: saved.sort,
-    maxMinutes: saved.maxMinutes,
-    servings: saved.servings,
-    recipeSort: saved.recipeSort,
+  ctx = {
+    live: adapter.isLive(),
+    ingredients,
+    snapshot,
+    allOffers,
+    present,
+    // Everything downstream is costed against the picked shops only, so the
+    // filter happens once here and every screen reads the same basket.
+    rescope() {
+      this.offers = allOffers.filter((o) => state.stores.has(o.store));
+      this.priced = costRecipes(bank, { ...snapshot, offers: this.offers }, ingredients);
+      this.pricedById = new Map(this.priced.map((p) => [p.recipe.id, p]));
+      this.bestIds = new Set([...cheapestByIngredient(this.offers).values()].map((o) => o.id));
+    },
+    save() {
+      savePrefs({
+        storesOff: present.filter((s) => !state.stores.has(s)),
+        search: state.search,
+        category: state.category,
+        sort: state.sort,
+        maxCost: state.maxCost,
+        maxMinutes: state.maxMinutes,
+        servings: state.servings,
+        recipeSort: state.recipeSort,
+      });
+    },
+    reset() {
+      state = stateFrom(DEFAULTS, present);
+      this.rescope();
+      clearPrefs();
+      route();
+    },
   };
+  ctx.rescope();
 
-  el('week-stamp').textContent = weekLabel(snapshot.week);
-  el('masthead-stores').textContent = present.join(' · ');
-  el('footer-source').textContent =
-    `${offers.length} offers, ${Object.keys(ingredients).length} ingredients, ` +
-    `${recipes.length} recipes. Snapshot ${snapshot.week}, ` +
-    `captured ${longDate(snapshot.capturedAt)}. Source: ${snapshot.source}. ` +
-    `Recipe bank generated ${longDate(bank.generatedAt)}.`;
+  document.getElementById('footer-checked').textContent =
+    `Prices checked ${longDate(snapshot.capturedAt)}. Always check in store.`;
 
-  const grid = el('offer-grid');
-  const offerEmpty = el('offer-empty');
-  const offerCount = el('offer-count');
-  const recipeList = el('recipe-list');
-  const recipeEmpty = el('recipe-empty');
-  const recipeCount = el('recipe-count');
-  const picker = el('store-picker');
+  window.addEventListener('hashchange', route);
+  route();
+}
 
-  function scopeLabel() {
-    if (state.stores.size === 0) return 'no stores';
-    if (state.stores.size === present.length) return plural(present.length, 'store', 'stores');
-    return present.filter((s) => state.stores.has(s)).join(' + ');
+function parse(hash) {
+  const [path, query = ''] = hash.replace(/^#\/?/, '').split('?');
+  const parts = path.split('/').filter(Boolean).map(decodeURIComponent);
+  return { parts, params: new URLSearchParams(query) };
+}
+
+function route() {
+  const { parts, params } = parse(location.hash);
+  // Meals lead: with no hash the site opens on the recipes.
+  const [section = 'recipes', id] = parts;
+
+  let current = 'recipes';
+  let title;
+  if (section === 'offers') {
+    current = 'offers';
+    title = renderOffers(view, ctx, state);
+  } else if (id) {
+    title = renderRecipe(view, ctx, state, id);
+  } else {
+    title = renderRecipes(view, ctx, state, params);
   }
 
-  function paint() {
-    // Everything downstream is costed against the picked stores only, so the
-    // filter happens once here and both sections read the same basket.
-    const inScope = offers.filter((o) => state.stores.has(o.store));
-    const byKey = indexOffers(inScope);
-    const bestIds = bestOfferIds(byKey);
-
-    const drawn = renderOffers(grid, inScope, ingredients, bestIds, state);
-    offerEmpty.hidden = drawn > 0;
-    offerEmpty.textContent = state.stores.size === 0
-      ? 'No stores ticked. Tick at least one store to see offers.'
-      : 'No offers match that search.';
-    offerCount.textContent = `${plural(drawn, 'offer', 'offers')} / ${scopeLabel()}`;
-
-    // With no store ticked there is nothing to cost against, so the cards
-    // would all read 0.00. Show the empty state instead.
-    const priced = state.stores.size === 0
-      ? []
-      : costAll(recipes, byKey, ingredients, state.servings, state.recipeSort);
-    const { shown, makeable } = renderRecipes(recipeList, priced, state);
-    recipeEmpty.hidden = shown > 0;
-    if (state.stores.size === 0) {
-      recipeEmpty.textContent = 'No stores ticked. Tick at least one store to cost a recipe.';
-      recipeCount.textContent = `0 recipes makeable / ${scopeLabel()}`;
-    } else {
-      recipeEmpty.textContent = state.maxMinutes > 0
-        ? `No recipes under ${state.maxMinutes} min.`
-        : 'No recipes to cost.';
-      recipeCount.textContent =
-        `${plural(makeable, 'recipe', 'recipes')} makeable of ${shown} / ${scopeLabel()}`;
-    }
-
-    savePrefs({
-      storesOff: present.filter((s) => !state.stores.has(s)),
-      search: state.search,
-      sort: state.sort,
-      maxMinutes: state.maxMinutes,
-      servings: state.servings,
-      recipeSort: state.recipeSort,
-    });
+  document.title = `${title}, Yellow Label`;
+  // The current page gets aria-current. On a recipe the Recipes link is the
+  // section, not the page, so it is marked as a section instead.
+  for (const link of document.querySelectorAll('[data-nav]')) {
+    link.removeAttribute('aria-current');
+    link.classList.toggle('nav__link--section', false);
+    if (link.dataset.nav !== current) continue;
+    if (id) link.classList.add('nav__link--section');
+    else link.setAttribute('aria-current', 'page');
   }
 
-  renderStorePicker(picker, present, state, paint);
-
-  const search = el('search-input');
-  const sortSelect = el('sort-select');
-  const timeSelect = el('time-select');
-  const servingsSelect = el('servings-select');
-  const recipeSortSelect = el('recipe-sort-select');
-
-  function syncControls() {
-    search.value = state.search;
-    sortSelect.value = state.sort;
-    timeSelect.value = String(state.maxMinutes);
-    servingsSelect.value = String(state.servings);
-    recipeSortSelect.value = state.recipeSort;
-    syncStorePicker(picker, state);
+  // After a navigation, start at the top and move focus to the new heading so
+  // a screen reader announces the page. Not on first load, where focus belongs
+  // to the browser.
+  if (!firstRoute) {
+    window.scrollTo(0, 0);
+    view.querySelector('h1')?.focus();
   }
-
-  search.addEventListener('input', () => {
-    state.search = search.value;
-    paint();
-  });
-  sortSelect.addEventListener('change', () => {
-    state.sort = sortSelect.value;
-    paint();
-  });
-  timeSelect.addEventListener('change', () => {
-    state.maxMinutes = Number(timeSelect.value);
-    paint();
-  });
-  servingsSelect.addEventListener('change', () => {
-    state.servings = Number(servingsSelect.value);
-    paint();
-  });
-  recipeSortSelect.addEventListener('change', () => {
-    state.recipeSort = recipeSortSelect.value;
-    paint();
-  });
-
-  el('reset-btn').addEventListener('click', () => {
-    state.stores = new Set(present);
-    state.search = DEFAULTS.search;
-    state.sort = DEFAULTS.sort;
-    state.maxMinutes = DEFAULTS.maxMinutes;
-    state.servings = DEFAULTS.servings;
-    state.recipeSort = DEFAULTS.recipeSort;
-    syncControls();
-    paint();
-    // paint() writes the current state back, so the clear comes last.
-    clearPrefs();
-  });
-
-  syncControls();
-  paint();
+  firstRoute = false;
 }
 
 function fail(err) {
-  const box = document.createElement('p');
-  box.className = 'error';
-  box.textContent = 'Offer data did not load. Serve this folder over HTTP, not from file://, and check data/ is present.';
-  el('offers').append(box);
+  view.innerHTML = `
+    <div class="error" role="alert">
+      <h1>Offer data did not load</h1>
+      <p>Serve this folder over HTTP, not from file://, and check that data/ is present.</p>
+    </div>`;
   console.error(err);
 }
 

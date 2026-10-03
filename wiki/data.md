@@ -105,8 +105,13 @@ across every string in the three files, and then costs the whole recipe bank
 and asserts at least one recipe is makeable. It prints every recipe costed,
 cheapest per serving first.
 
-`scripts/check` covers the same contract plus the visual rules, so it also
-catches a stray rounded corner or a soft gradient in the CSS.
+It also checks the costing helpers: cost per serving holds at 1 to 12
+servings, the lines add up to the total, and full packs cover the amount
+used and never cost less.
+
+`scripts/check` covers the same contract plus the writing rules over the
+code, and fails a stylesheet that sets a raw colour instead of using the
+tokens in `styles/tokens.css`.
 
 The validator was negative tested: eight faults were seeded into a scratch
 copy of the data and all eight were caught. A pass only means something when

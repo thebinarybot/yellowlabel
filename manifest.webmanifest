@@ -1,16 +1,19 @@
 {
   "name": "Yellow Label",
   "short_name": "Yellow Label",
-  "description": "This week's cheapest ingredients across Aldi, Dunnes Stores and Lidl in Ireland, and the recipes they make. Offer data is a captured snapshot.",
+  "description": "This week's offers across Aldi, Dunnes Stores, Lidl and Tesco in Ireland, and recipes costed from those prices. Offer data is a captured snapshot.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#FAFAF5",
-  "theme_color": "#FFE500",
+  "background_color": "#F7F5EF",
+  "theme_color": "#0B5D3B",
   "lang": "en-IE",
   "dir": "ltr",
-  "categories": ["food", "shopping"],
+  "categories": [
+    "food",
+    "shopping"
+  ],
   "icons": [
     {
       "src": "./icons/icon.svg",

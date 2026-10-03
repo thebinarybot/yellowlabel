@@ -1,0 +1,78 @@
+/* Design tokens, copied from docs/offers-recipes-handover/design-tokens.css */
+:root {
+  /* Colour */
+  --green-700: #0B5D3B;      /* primary buttons, links, savings text, badges */
+  --green-900: #074229;      /* hover / pressed */
+  --green-50: #E2F0E6;       /* savings chips, success messages */
+  --green-25: #EEF6F0;       /* selected tiles */
+  --orange: #C8721D;         /* logo centre only, decorative, never text */
+  --ink: #1A1A1A;            /* main text, prices */
+  --ink-2: #3D3D3D;          /* secondary text */
+  --ink-3: #595959;          /* captions, meta */
+  --stone: #F7F5EF;          /* page background */
+  --surface: #FFFFFF;        /* cards, header, inputs */
+  --placeholder: #ECE9E0;    /* image slots */
+  --table-head: #F4F4F1;
+  --line: #D6D6D6;           /* card borders, dividers */
+  --line-soft: #E4E4E0;      /* table row dividers */
+  --line-tile: #C4C4C4;      /* unselected tiles */
+  --line-strong: #8C8C8C;    /* inputs, selects */
+  --warn-bg: #FCEBD5;
+  --warn: #7A4100;           /* "Not for you" chips */
+  --error: #9B1C1C;
+
+  /* Type */
+  --font: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  --text-display: 48px;
+  --text-h1: 40px;
+  --text-h2-section: 28px;
+  --text-h2-card: 22px;
+  --text-h3: 20px;
+  --text-price-lg: 52px;
+  --text-price: 28px;
+  --text-body: 17px;
+  --text-small: 15px;
+  --text-caption: 14px;
+  --leading-body: 1.5;
+  --leading-heading: 1.15;
+
+  /* Spacing */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+
+  /* Radius */
+  --radius-sm: 8px;    /* inputs, small buttons, chips */
+  --radius-md: 10px;   /* buttons, checkbox tiles */
+  --radius-lg: 12px;   /* cards, panels */
+  --radius-xl: 16px;   /* large panels */
+  --radius-pill: 999px;
+
+  /* Sizing */
+  --page-max: 1120px;
+  --form-max: 820px;
+  --gutter: 24px;
+  --touch-min: 44px;
+  --input-h: 48px;
+  --focus-ring: 3px solid var(--green-700);
+  --focus-offset: 2px;
+}
+
+body {
+  margin: 0;
+  background: var(--stone);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+a { color: var(--green-700); }
+a:hover { color: var(--green-900); }
+:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
+.price { font-weight: 700; font-variant-numeric: tabular-nums; }
