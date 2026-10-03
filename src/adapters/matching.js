@@ -1,4 +1,4 @@
-// Pure functions implementing the matching rule from PROBLEM.md.
+// Pure functions implementing the matching rule from wiki/build/problem.md.
 //
 //   A recipe is makeable when every essential ingredient has at least one
 //   offer this week. Recipe cost is the sum of the cheapest offer per

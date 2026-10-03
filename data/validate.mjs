@@ -5,7 +5,7 @@
 // Exits non zero on the first category of failure, printing every problem it
 // found. Checks three things:
 //
-//   1. The frozen contract in PROBLEM.md, field by field.
+//   1. The frozen contract in wiki/build/problem.md, field by field.
 //   2. The writing rules, over every string a user can read.
 //   3. The matching rule, by actually costing the recipe bank.
 

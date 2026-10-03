@@ -20,7 +20,7 @@ If `index.html` is not in the same folder as `data/`, pass a base path:
 
 ## What you get back
 
-`snapshot` and `bank` are the raw contract shapes from PROBLEM.md.
+`snapshot` and `bank` are the raw contract shapes from wiki/build/problem.md.
 `adapter.isLive()` returns `false`, so the UI must print
 `snapshot.capturedAt` and say the data is a captured snapshot.
 

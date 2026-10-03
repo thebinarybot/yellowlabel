@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-// check - verify the build against PROBLEM.md: the frozen data contract and
+// check - verify the build against wiki/build/problem.md: the frozen data contract and
 // the writing and visual rules. Tooling, owned by neither agent.
 //
 //   node scripts/check
@@ -116,7 +116,7 @@ function walk(dir, out = []) {
 }
 
 function checkProse() {
-  // PROBLEM.md lists the banned words, so scanning it would always fail.
+  // wiki/build/problem.md lists the banned words, so scanning it would always fail.
   const files = walk(ROOT).filter(f => !f.includes(`${path.sep}data${path.sep}`) || /\.json$/.test(f));
 
   for (const f of files) {

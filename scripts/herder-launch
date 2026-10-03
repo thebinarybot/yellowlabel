@@ -27,9 +27,9 @@ fi
 briefing() {
   local slug="$1"
   cat <<EOF
-You are the '$slug' agent on the AIWeek prototype. Read PROBLEM.md in full
+You are the '$slug' agent on the AIWeek prototype. Read wiki/build/problem.md in full
 first: it carries the system prompt you operate under, the frozen data
-contract, and the writing and visual rules. Then read AGENTS.md for your scope,
+contract, and the writing and visual rules. Then read wiki/build/agents.md for your scope,
 then .claude/orchestration/$SESSION/$slug/task.md for your objective.
 
 Hard rules: stay inside the files you own, do not edit the data contract
