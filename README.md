@@ -1,4 +1,4 @@
-# Yellow Label
+# Smart Eats Ireland
 
 See what is cheapest across Aldi, Dunnes Stores and Lidl this week, and what
 you can cook with it.
