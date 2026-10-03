@@ -31,7 +31,7 @@ looking offer data, and produce recipes from it without a dead end.
 | Recipes | Pre-generated bank, authored by Claude ahead of time, shipped static |
 | Core flow | Deals to recipes: offers first, what they cook second |
 | Stack | Vanilla HTML, CSS and JS. No build step. TypeScript only if it pays for itself |
-| Visual direction | Shelf edge label (supermarket discount sticker) |
+| Visual direction | Shelf edge label (supermarket discount sticker). Since replaced by the design in `docs/offers-recipes-handover/` |
 | Screens | One scrolling view |
 | Agents | Two in parallel: `data` and `app` |
 

@@ -107,7 +107,8 @@ const BANNED = [
 function walk(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', '.git', 'worktrees', 'scripts', '.claude', '.cloudflare', 'dist'].includes(e.name)) continue;
+    // docs holds the design handover as delivered, which is reference, not build.
+    if (['node_modules', '.git', 'worktrees', 'scripts', '.claude', '.cloudflare', 'dist', 'docs'].includes(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) walk(p, out);
     else if (/\.(html|css|js|ts|webmanifest|json)$/.test(e.name)) out.push(p);
@@ -130,20 +131,11 @@ function checkProse() {
     if (text.includes('—')) fail(`${rel} contains an em dash`);
     if (/[\u{1F300}-\u{1FAFF}\u{2700}-\u{27BF}]/u.test(text)) fail(`${rel} contains emoji`);
 
-    if (/\.(css|html)$/.test(f)) {
-      const m = text.match(/border-radius\s*:\s*([^;}\n]+)/g) || [];
-      for (const decl of m) {
-        if (!/:\s*0(px|rem|%)?\s*$/.test(decl)) fail(`${rel} sets ${decl.trim()}, but the direction is hard edges only`);
-      }
-      // repeating-linear-gradient with hard stops is how you draw a barcode or
-      // a stripe in CSS, which the direction explicitly asks for. Only smooth
-      // gradients and blur are out.
-      const soft = text
-        .replace(/repeating-(linear|radial|conic)-gradient/g, '')
-        .match(/\b(linear|radial|conic)-gradient|backdrop-filter/g);
-      if (soft) {
-        fail(`${rel} uses ${[...new Set(soft)].join(', ')}, which the visual direction rules out`);
-      }
+    // Colours come from styles/tokens.css, the handover's token file, so the
+    // palette stays in one place. Other stylesheets use var(--token).
+    if (/\.css$/.test(f) && path.basename(f) !== 'tokens.css') {
+      const raw = text.match(/#[0-9a-fA-F]{3,8}\b|\b(rgb|hsl)a?\(/g);
+      if (raw) fail(`${rel} sets raw colours (${[...new Set(raw)].join(', ')}); use the tokens in styles/tokens.css`);
     }
   }
 }

@@ -1,0 +1,537 @@
+/* Components for the offers and recipes screens. Every value comes from
+   styles/tokens.css, which is the handover's token file as given. Layout
+   reflows from 320px up with wrapping flex and auto-fill grids; the one width
+   query only moves the recipe cost panel beside the ingredients. */
+
+* { box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3 { margin: 0; line-height: var(--leading-heading); }
+h1 { font-size: var(--text-h1); }
+p { margin: 0; }
+s { text-decoration-thickness: 1.5px; }
+ul.grid, ol { margin: 0; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: var(--space-16);
+  top: -100px;
+  z-index: 10;
+  padding: var(--space-12) var(--space-16);
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+.skip:focus { top: var(--space-16); }
+
+.price { color: var(--ink); }
+.price--md { font-size: var(--text-price); line-height: 1.1; }
+.price--lg { font-size: var(--text-price-lg); line-height: 1.05; }
+
+.caption { font-size: var(--text-caption); color: var(--ink-3); }
+
+/* --- header and footer ------------------------------------------------- */
+
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.site-header__inner,
+.site-footer__inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 14px var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+.brand:hover { color: var(--ink); }
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  padding: var(--space-12) 14px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nav__link:hover { color: var(--green-900); text-decoration: underline; }
+.nav__link[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 8px;
+}
+.nav__link--section { font-weight: 700; }
+
+.site-footer {
+  margin-top: auto;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-small);
+  color: var(--ink-3);
+}
+.site-footer__inner { padding: var(--space-24) var(--gutter); }
+
+/* --- page -------------------------------------------------------------- */
+
+.page {
+  width: 100%;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--space-48) var(--gutter) var(--space-64);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.page:focus { outline: none; }
+/* Headings take focus after a navigation so screen readers announce the
+   page. They are not controls, so they get no focus ring. */
+.page h1:focus { outline: none; }
+
+.page__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.lead { font-size: 18px; color: var(--ink-2); max-width: 720px; }
+.irish { font-size: var(--text-h3); font-style: italic; color: var(--green-700); }
+.back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  font-size: var(--text-small);
+  font-weight: 700;
+}
+.loading { color: var(--ink-3); }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+}
+.notice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.notice a { font-weight: 700; }
+p.notice { display: block; }
+.notice__title { font-size: 18px; }
+.notice--warn { background: var(--warn-bg); border-color: var(--warn-bg); color: var(--warn); }
+
+.error {
+  padding: var(--space-20);
+  border: 2px solid var(--error);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--error);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* --- controls ---------------------------------------------------------- */
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.filters__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-16);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1 1 200px;
+  max-width: 100%;
+  font-size: var(--text-small);
+  font-weight: 700;
+}
+.field--grow { flex: 2 1 260px; }
+.field__label { font-size: var(--text-small); font-weight: 700; margin-bottom: var(--space-8); }
+.select,
+.input {
+  min-height: var(--touch-min);
+  width: 100%;
+  padding: var(--space-8) var(--space-12);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 400;
+  font-size: var(--text-body);
+}
+.input::placeholder { color: var(--ink-3); }
+.count {
+  margin: 0 0 10px auto;
+  font-size: var(--text-small);
+  color: var(--ink-3);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+.pill {
+  min-height: var(--touch-min);
+  padding: var(--space-8) 18px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+.pill:hover { border-color: var(--ink); }
+.pill[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--surface);
+}
+
+.button {
+  min-height: var(--input-h);
+  padding: 0 var(--space-24);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.button--secondary {
+  border: 1.5px solid var(--green-700);
+  background: var(--surface);
+  color: var(--green-700);
+}
+.button--secondary:hover { border-color: var(--green-900); color: var(--green-900); }
+
+.toggle {
+  align-self: flex-start;
+  min-height: var(--touch-min);
+  padding: var(--space-8) var(--space-16);
+  border: 1.5px solid var(--green-700);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--green-700);
+  font: inherit;
+  font-size: var(--text-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+.toggle[aria-pressed="true"] { background: var(--green-25); }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+  padding: 40px var(--space-24);
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  color: var(--ink-2);
+}
+.empty__title { font-size: var(--text-h3); font-weight: 700; color: var(--ink); }
+
+.reset { display: flex; justify-content: flex-end; }
+.link-button {
+  min-height: var(--touch-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--green-700);
+  font: inherit;
+  font-size: var(--text-small);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link-button:hover { color: var(--green-900); }
+[hidden] { display: none !important; }
+
+/* --- chips ------------------------------------------------------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  padding: var(--space-4) 10px;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.chip--saving { border-radius: var(--radius-pill); background: var(--green-50); color: var(--green-700); }
+.chip--best { border-radius: 6px; background: var(--surface); color: var(--green-700); box-shadow: inset 0 0 0 1.5px var(--green-700); }
+.chip--warn { border-radius: 6px; background: var(--warn-bg); color: var(--warn); }
+
+/* --- cards ------------------------------------------------------------- */
+
+.grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-20);
+}
+.grid > li { display: flex; }
+.grid--offers { grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); }
+.grid--recipes { grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: var(--space-24); }
+
+.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.offer { padding: var(--space-16); gap: var(--space-4); }
+.offer__shop,
+.offer__size,
+.offer__ends { font-size: var(--text-caption); color: var(--ink-3); }
+.offer__name { font-size: 18px; line-height: 1.3; }
+.offer__prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: var(--space-8);
+}
+.offer__was { font-size: var(--text-small); color: var(--ink-3); }
+.offer .chips { margin-top: var(--space-4); }
+.card__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  margin-top: auto;
+  padding-top: var(--space-8);
+  font-size: var(--text-small);
+  font-weight: 700;
+}
+
+.recipe-card {
+  padding: 18px;
+  gap: 6px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.recipe-card:hover { color: var(--ink); border-color: var(--green-700); }
+.recipe-card:hover .recipe-card__title { text-decoration: underline; }
+.recipe-card .chips { margin-bottom: 2px; }
+.recipe-card__title { font-size: var(--text-h3); line-height: 1.3; }
+.recipe-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-8);
+  margin-top: var(--space-4);
+}
+.recipe-card__per { font-size: var(--text-small); color: var(--ink-3); }
+.recipe-card__saving { font-size: var(--text-small); font-weight: 700; color: var(--green-700); }
+.recipe-card__note { font-size: var(--text-caption); color: var(--ink-2); }
+.recipe-card__meta { margin-top: auto; padding-top: var(--space-4); font-size: var(--text-caption); color: var(--ink-3); }
+
+/* --- recipe detail ----------------------------------------------------- */
+
+.detail {
+  display: grid;
+  gap: var(--space-32);
+  align-items: start;
+}
+.detail__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+  min-width: 0;
+}
+@media (min-width: 900px) {
+  .detail { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); }
+  .cost { grid-column: 2; grid-row: 1; position: sticky; top: var(--space-24); }
+  .detail__main { grid-column: 1; grid-row: 1; }
+}
+
+.cost {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-24);
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+}
+.cost__title { font-size: 18px; color: var(--ink-2); }
+.cost__per {
+  display: flex;
+  flex-direction: column;
+  color: var(--ink-2);
+}
+.cost__total {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-8);
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.cost__total strong { font-size: 22px; font-variant-numeric: tabular-nums; }
+.cost__saving {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--green-50);
+  color: var(--green-700);
+  font-weight: 700;
+}
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+.stepper__label { font-weight: 700; }
+.stepper__controls { display: flex; align-items: center; gap: var(--space-4); }
+.stepper__button {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.stepper__button:disabled { color: var(--ink-3); border-color: var(--line); cursor: not-allowed; }
+.stepper__value {
+  min-width: var(--touch-min);
+  text-align: center;
+  font-size: var(--text-h3);
+  font-weight: 700;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.stack > h2 { font-size: var(--text-h2-section); }
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+.table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  padding: 14px var(--space-20);
+  text-align: left;
+  vertical-align: top;
+}
+.table thead th { background: var(--table-head); font-size: var(--text-small); }
+.table tbody tr { border-top: 1px solid var(--line-soft); }
+.table tbody th { font-weight: 400; }
+.table tfoot tr { border-top: 2px solid var(--ink); }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.table__total { font-size: 22px; font-weight: 700; }
+.row__shop { color: var(--ink-2); }
+.row__offer { font-size: var(--text-caption); font-weight: 700; color: var(--green-700); }
+.row__pack { font-size: var(--text-caption); font-weight: 400; color: var(--ink-3); }
+.row--missing { color: var(--ink-3); }
+.row--missing th { color: var(--ink-2); }
+
+.method { max-width: 760px; }
+.method__steps {
+  padding-left: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  font-size: 18px;
+}
+
+/* --- small screens ----------------------------------------------------- */
+
+/* Below 600px the ingredients table becomes a list, as in the phone design:
+   name with amount and shop under it on the left, cost on the right, so the
+   prices never sit off screen behind a sideways scroll. */
+@media (max-width: 600px) {
+  .table { min-width: 0; }
+  .table thead { display: none; }
+  .table tbody,
+  .table tfoot { display: block; }
+  .table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-12);
+    padding: var(--space-12) var(--space-16);
+  }
+  .table th,
+  .table td { display: block; padding: 0; }
+  .table tbody th { grid-column: 1; }
+  .table tbody td:nth-of-type(1),
+  .table tbody td:nth-of-type(2) { grid-column: 1; font-size: var(--text-caption); color: var(--ink-3); }
+  .table tbody .num { grid-column: 2; grid-row: 1 / span 3; }
+  .table tfoot th { grid-column: 1; align-self: center; }
+  .table tfoot td { grid-column: 2; }
+}
+
+@media (max-width: 480px) {
+  :root { --gutter: 16px; }
+  h1 { font-size: 30px; }
+  .page { padding-top: var(--space-32); }
+  .price--lg { font-size: 44px; }
+  .input::placeholder { color: var(--ink-3); }
+.count { margin-left: 0; }
+}

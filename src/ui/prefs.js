@@ -10,16 +10,22 @@ export const DEFAULTS = {
   // inclusions, means a store added to the data later arrives switched on.
   storesOff: [],
   search: '',
-  sort: 'price',
+  category: '',
+  sort: 'savingPct',
+  maxCost: 0,
   maxMinutes: 0,
   servings: 0,
   recipeSort: 'cost',
 };
 
-const SORTS = ['price', 'unit', 'saving', 'store'];
-const RECIPE_SORTS = ['cost', 'saving'];
-const MINUTES = [0, 20, 30, 45];
-const SERVINGS = [0, 1, 2, 3, 4, 5, 6, 8];
+// The allowed values for each choice. A value saved by an older version of
+// the page that is no longer offered falls back to the default.
+export const SORTS = ['savingPct', 'price', 'unitPrice'];
+export const RECIPE_SORTS = ['cost', 'saving', 'time'];
+export const COSTS = [0, 1.5, 2.5, 3.5];
+export const MINUTES = [0, 45, 30, 20];
+export const SERVINGS = [0, 1, 2, 3, 4, 5, 6, 8];
+const CATEGORY = /^[a-z]{0,20}$/;
 
 const pick = (value, allowed, fallback) =>
   allowed.includes(value) ? value : fallback;
@@ -32,7 +38,9 @@ function clean(raw) {
       ? raw.storesOff.filter((s) => typeof s === 'string')
       : [],
     search: typeof raw.search === 'string' ? raw.search.slice(0, 60) : '',
+    category: typeof raw.category === 'string' && CATEGORY.test(raw.category) ? raw.category : '',
     sort: pick(raw.sort, SORTS, DEFAULTS.sort),
+    maxCost: pick(Number(raw.maxCost), COSTS, DEFAULTS.maxCost),
     recipeSort: pick(raw.recipeSort, RECIPE_SORTS, DEFAULTS.recipeSort),
     maxMinutes: pick(Number(raw.maxMinutes), MINUTES, DEFAULTS.maxMinutes),
     servings: pick(Number(raw.servings), SERVINGS, DEFAULTS.servings),

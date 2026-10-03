@@ -5,7 +5,7 @@
 // changes. The data files are stale while revalidate: offline gets the last
 // snapshot, online quietly picks up a newer one.
 
-const VERSION = 'v3';
+const VERSION = 'v4';
 const SHELL_CACHE = `weekprices-shell-${VERSION}`;
 const DATA_CACHE = `weekprices-data-${VERSION}`;
 
@@ -14,15 +14,20 @@ const SHELL = [
   './index.html',
   './manifest.webmanifest',
   './icons/icon.svg',
-  './styles/label.css',
+  './styles/tokens.css',
+  './styles/app.css',
   './src/ui/app.js',
   './src/ui/format.js',
-  './src/ui/match.js',
   './src/ui/offers.js',
   './src/ui/recipes.js',
+  './src/ui/recipe.js',
+  './src/ui/shops.js',
   './src/ui/prefs.js',
+  './src/adapters/index.js',
+  './src/adapters/matching.js',
   './src/adapters/store-adapter.js',
   './src/adapters/seed-adapter.js',
+  './src/adapters/live-adapter.js',
 ];
 
 const DATA = [

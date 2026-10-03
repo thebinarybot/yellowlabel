@@ -12,7 +12,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { costRecipes, cheapestByIngredient } from '../src/adapters/matching.js';
+import { costRecipes, cheapestByIngredient, scaleRecipe, packQty, savingPct } from '../src/adapters/matching.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (f) => JSON.parse(readFileSync(join(here, f), 'utf8'));
@@ -132,6 +132,43 @@ checkText('recipes.json', bank);
 const priced = costRecipes(bank, snapshot, ingredients);
 const makeable = priced.filter((p) => p.makeable);
 if (makeable.length === 0) fail('matching', 'no recipe is makeable from the offers this week');
+
+// 6. The detail page rules: servings scaling, pack prices and percent saving.
+for (const offer of snapshot.offers) {
+  const size = packQty(offer);
+  if (!(size > 0)) fail(`offer ${offer.id}`, 'pack size from price over unit price is not above zero');
+  const pct = savingPct(offer);
+  if (pct < 0 || pct > 100) fail(`offer ${offer.id}`, `saving of ${pct}% is out of range`);
+  if (offer.wasPrice == null && pct !== 0) fail(`offer ${offer.id}`, 'has a saving with no previous price');
+}
+for (const p of priced) {
+  const at = `scaling ${p.recipe.id}`;
+  const base = scaleRecipe(p, p.recipe.servings);
+  if (base.total !== p.cost) {
+    fail(at, `total at the recipe's own servings is ${base.total}, costing says ${p.cost}`);
+  }
+  for (const servings of [1, 2, 7, 12]) {
+    const scaled = scaleRecipe(p, servings);
+    if (scaled.perServing !== p.costPerServing) fail(at, `per serving moved at ${servings} servings`);
+    if (servings === 1 && scaled.total !== p.costPerServing) {
+      fail(at, `total for 1 serving is ${scaled.total} but per serving is ${p.costPerServing}`);
+    }
+    if (Math.abs(scaled.total - p.costPerServing * servings) > 0.005 * servings + 0.005) {
+      fail(at, `total ${scaled.total} at ${servings} servings does not match ${p.costPerServing} per serving`);
+    }
+    const lineCents = scaled.lines.reduce((t, l) => t + Math.round((l.lineCost ?? 0) * 100), 0);
+    if (lineCents !== Math.round(scaled.total * 100)) {
+      fail(at, `lines add up to ${(lineCents / 100).toFixed(2)} but the total is ${scaled.total} at ${servings} servings`);
+    }
+    for (const l of scaled.lines.filter((x) => x.offer)) {
+      if (Math.abs(l.lineCost - l.offer.unitPrice * l.qty) >= 0.01) fail(at, `${l.ingredientKey} line is more than a cent off its exact cost`);
+    }
+    if (scaled.packTotal < scaled.total) fail(at, `full packs ${scaled.packTotal} cost less than the amounts used ${scaled.total}`);
+    for (const line of scaled.lines.filter((l) => l.offer)) {
+      if (line.packs * packQty(line.offer) < line.qty - 1e-6) fail(at, `${line.ingredientKey} packs do not cover the amount used`);
+    }
+  }
+}
 
 if (problems.length) {
   console.error(`FAIL: ${problems.length} problem(s)\n`);
