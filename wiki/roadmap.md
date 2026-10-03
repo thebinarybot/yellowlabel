@@ -46,7 +46,7 @@ arguably the more useful one, and it changes which recipes look cheapest.
 
 ## Savings ranking
 
-20 of the 72 offers have no previous price, so they score a saving of zero and
+25 of the 97 offers have no previous price, so they score a saving of zero and
 sink in any ranking by saving. Penne pasta at 0.69 for 500g is a good price
 and ranks last.
 

@@ -5,14 +5,14 @@ Three files in `data/`, joined by `ingredientKey`.
 The prices are illustrative sample data, not real store prices. See
 [Roadmap](roadmap.md) for what a live source would take.
 
-![Recipes](images/recipes.png)
+![Meals](images/meals.png)
 
 ## Current set
 
 | | |
 | --- | --- |
 | Ingredients | 41, of which 38 have an offer |
-| Offers | 72 across three shops |
+| Offers | 97 across four shops |
 | Recipes | 14, of which 13 are makeable |
 
 Two gaps are deliberate, so the matching rule is visibly doing work rather
@@ -61,11 +61,11 @@ determines what `unitPrice` means for every offer on that ingredient.
 }
 ```
 
-- `store` is `ALDI`, `DUNNES` or `LIDL`.
-- `wasPrice` is null when there is no previous price. 20 of the 72 offers have
+- `store` is `ALDI`, `DUNNES`, `LIDL` or `TESCO`.
+- `wasPrice` is null when there is no previous price. 25 of the 97 offers have
   none, so they score a saving of zero.
 - `source` must say `seed` unless the data genuinely came from a live read.
-  The interface reads this to decide whether to show the snapshot notice.
+  The footer prints it alongside `capturedAt`.
 
 ## `recipes.json`
 

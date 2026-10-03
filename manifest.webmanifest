@@ -1,6 +1,6 @@
 {
-  "name": "Yellow Label",
-  "short_name": "Yellow Label",
+  "name": "Smart Eats Ireland",
+  "short_name": "Smart Eats",
   "description": "This week's cheapest ingredients across Aldi, Dunnes Stores and Lidl in Ireland, and the recipes they make. Offer data is a captured snapshot.",
   "start_url": "./index.html",
   "scope": "./",

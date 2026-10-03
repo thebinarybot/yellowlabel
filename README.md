@@ -1,13 +1,16 @@
 # Smart Eats Ireland
 
-See what is cheapest across Aldi, Dunnes Stores and Lidl this week, and what
-you can cook with it.
+See what you can cook this week from whatever is cheapest across Aldi, Dunnes
+Stores, Lidl and Tesco.
 
-![Yellow Label](wiki/images/offers.png)
+![Smart Eats Ireland](wiki/images/meals.png)
 
-A yellow label means that offer is the cheapest one for its ingredient this
-week. Under the offers, every meal those offers make, with a cost per serving
-and which shop each ingredient comes from.
+Meals first, each with a cost per serving and which shop every ingredient
+comes from. Pick the shops you actually use and everything re-prices against
+them.
+
+Below that, the offers themselves. A yellow label marks the cheapest offer for
+its ingredient this week.
 
 Installable, and works offline once loaded.
 
@@ -30,6 +33,6 @@ No build step and no dependencies.
 ---
 
 Sample data. The prices are illustrative and are not real store prices. Not
-affiliated with Aldi, Dunnes Stores or Lidl.
+affiliated with Aldi, Dunnes Stores, Lidl or Tesco.
 
 MIT licensed.

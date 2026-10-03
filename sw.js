@@ -5,7 +5,7 @@
 // changes. The data files are stale while revalidate: offline gets the last
 // snapshot, online quietly picks up a newer one.
 
-const VERSION = 'v3';
+const VERSION = 'v4';
 const SHELL_CACHE = `weekprices-shell-${VERSION}`;
 const DATA_CACHE = `weekprices-data-${VERSION}`;
 

@@ -78,7 +78,7 @@ the recipe needs. `costRecipes` also returns:
 `unitPrice` is per kg, per litre, per each or per pack depending on the
 ingredient. It is only meaningful **within** a single ingredient.
 
-Sorting all 72 offers by `unitPrice` across different units would rank eggs
+Sorting all 97 offers by `unitPrice` across different units would rank eggs
 above beef and look authoritative while being meaningless. `bestDeals` exists
 to avoid that: it picks the cheapest shop per ingredient and ranks by the size
 of the drop.
