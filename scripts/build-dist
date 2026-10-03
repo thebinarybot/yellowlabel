@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# build-dist - assemble the deployable site into dist/.
+#
+# Only the files the browser needs. The repo also carries the agent rig, the
+# wiki and the validators, none of which belong on a public web host.
+
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DIST="$ROOT/dist"
+
+rm -rf "$DIST"
+mkdir -p "$DIST"
+
+for item in index.html manifest.webmanifest sw.js icons styles src data; do
+  cp -r "$ROOT/$item" "$DIST/"
+done
+
+# validate.mjs is a Node script, not a browser asset.
+rm -f "$DIST/data/validate.mjs"
+find "$DIST" -name "README.md" -delete
+
+echo "dist built:"
+find "$DIST" -type f | sed "s|$DIST/|  |" | sort
+echo "  total: $(find "$DIST" -type f | wc -l) files, $(du -sh "$DIST" | cut -f1)"

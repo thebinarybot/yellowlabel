@@ -36,7 +36,7 @@ const REQUIRED_OFFER_FIELDS = [
   'id', 'store', 'ingredientKey', 'name', 'size',
   'price', 'unitPrice', 'unitLabel', 'validTo'
 ];
-const STORES = ['ALDI', 'DUNNES', 'LIDL'];
+const STORES = ['ALDI', 'DUNNES', 'LIDL', 'TESCO'];
 
 function checkData() {
   const ing = readJson('data/ingredients.json');
@@ -107,7 +107,7 @@ const BANNED = [
 function walk(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (['node_modules', '.git', 'worktrees', 'scripts', '.claude'].includes(e.name)) continue;
+    if (['node_modules', '.git', 'worktrees', 'scripts', '.claude', '.cloudflare', 'dist'].includes(e.name)) continue;
     const p = path.join(dir, e.name);
     if (e.isDirectory()) walk(p, out);
     else if (/\.(html|css|js|ts|webmanifest|json)$/.test(e.name)) out.push(p);

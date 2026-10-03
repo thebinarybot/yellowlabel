@@ -4,7 +4,7 @@
 // this. The UI never reads a JSON file directly, so swapping the source is a
 // one line change in src/adapters/index.js.
 //
-// @typedef {'ALDI'|'DUNNES'|'LIDL'} StoreCode
+// @typedef {'ALDI'|'DUNNES'|'LIDL'|'TESCO'} StoreCode
 //
 // @typedef {Object} Ingredient
 // @property {string} label      Display name, for example "Chicken thighs".
@@ -98,5 +98,5 @@ export class StoreAdapter {
   }
 }
 
-/** The three store codes the app knows about, in display order. */
-export const STORES = ['ALDI', 'DUNNES', 'LIDL'];
+/** The store codes the app knows about, in display order. */
+export const STORES = ['ALDI', 'DUNNES', 'LIDL', 'TESCO'];

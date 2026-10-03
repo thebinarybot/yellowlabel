@@ -24,7 +24,7 @@ const bank = read('recipes.json');
 const problems = [];
 const fail = (where, msg) => problems.push(`${where}: ${msg}`);
 
-const STORES = new Set(['ALDI', 'DUNNES', 'LIDL']);
+const STORES = new Set(['ALDI', 'DUNNES', 'LIDL', 'TESCO']);
 const UNITS = new Set(['kg', 'litre', 'each', 'pack']);
 const CATEGORIES = new Set(['protein', 'veg', 'fruit', 'dairy', 'pantry', 'bakery']);
 const UNIT_LABEL = { kg: 'per kg', litre: 'per litre', each: 'each', pack: 'per pack' };

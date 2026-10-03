@@ -1,4 +1,5 @@
-// Offer grid: one shelf edge label per offer.
+// Offer grid: one shelf edge label per offer. Plus the two controls that
+// decide which offers exist at all: the store picker and the search box.
 
 import { esc, money, priceHtml, shortDate, storeName, round2 } from './format.js';
 
@@ -11,6 +12,13 @@ export const SORTS = {
 
 export function saving(offer) {
   return offer.wasPrice ? round2(offer.wasPrice - offer.price) : 0;
+}
+
+/** Match the shelf name and the ingredient label, so either term works. */
+function matches(offer, ingredients, term) {
+  if (!term) return true;
+  const label = ingredients[offer.ingredientKey]?.label ?? '';
+  return `${offer.name} ${label} ${offer.ingredientKey}`.toLowerCase().includes(term);
 }
 
 function labelHtml(offer, ingredients, bestIds) {
@@ -59,41 +67,43 @@ function labelHtml(offer, ingredients, bestIds) {
 }
 
 /**
- * Render the grid.
+ * Render the grid from offers already narrowed to the picked stores.
  * @returns {number} how many offers were drawn.
  */
 export function renderOffers(root, offers, ingredients, bestIds, state) {
+  const term = state.search.trim().toLowerCase();
   const shown = offers
-    .filter((o) => state.stores.size === 0 || state.stores.has(o.store))
+    .filter((o) => matches(o, ingredients, term))
     .sort(SORTS[state.sort] ?? SORTS.unit);
 
   root.innerHTML = shown.map((o) => labelHtml(o, ingredients, bestIds)).join('');
   return shown.length;
 }
 
-/** Store filter buttons. An empty selection means every store. */
-export function renderStoreFilter(root, stores, state, onChange) {
-  root.innerHTML = [
-    `<button type="button" class="segment__btn" data-store="" aria-pressed="${state.stores.size === 0}">All</button>`,
-    ...stores.map((s) =>
-      `<button type="button" class="segment__btn" data-store="${esc(s)}" aria-pressed="${state.stores.has(s)}">${esc(storeName(s))}</button>`),
-  ].join('');
+/**
+ * Store picker. One tick box per store found in the data, so a store added
+ * to the snapshot later shows up here without a code change.
+ */
+export function renderStorePicker(root, stores, state, onChange) {
+  root.innerHTML = stores.map((s) => `
+    <label class="tick">
+      <input type="checkbox" value="${esc(s)}"${state.stores.has(s) ? ' checked' : ''}>
+      <span class="stamp stamp--${esc(s)}">${esc(s)}</span>
+      <span class="visually-hidden">${esc(storeName(s))}</span>
+    </label>`).join('');
 
-  root.addEventListener('click', (event) => {
-    const btn = event.target.closest('button[data-store]');
-    if (!btn) return;
-    const code = btn.dataset.store;
-    if (code === '') {
-      state.stores.clear();
-    } else if (state.stores.has(code)) {
-      state.stores.delete(code);
-    } else {
-      state.stores.add(code);
-    }
-    for (const b of root.querySelectorAll('button[data-store]')) {
-      const key = b.dataset.store;
-      b.setAttribute('aria-pressed', String(key === '' ? state.stores.size === 0 : state.stores.has(key)));
-    }
+  root.addEventListener('change', (event) => {
+    const box = event.target.closest('input[type="checkbox"]');
+    if (!box) return;
+    if (box.checked) state.stores.add(box.value);
+    else state.stores.delete(box.value);
     onChange();
   });
+}
+
+/** Push state back onto the tick boxes, for the reset control. */
+export function syncStorePicker(root, state) {
+  for (const box of root.querySelectorAll('input[type="checkbox"]')) {
+    box.checked = state.stores.has(box.value);
+  }
 }

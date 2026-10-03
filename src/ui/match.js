@@ -6,6 +6,11 @@
 
 import { round2 } from './format.js';
 
+/** Quantities are scaled, so they need more than cents of precision. */
+function round3(n) {
+  return Math.round((n + Number.EPSILON) * 1000) / 1000;
+}
+
 /**
  * Group offers by ingredientKey, cheapest unit price first.
  * @returns {Map<string, Array>} key to sorted offers.
@@ -32,29 +37,45 @@ export function bestOfferIds(byKey) {
   return ids;
 }
 
+// wasPrice is a shelf price, so it has to be put on the same per unit footing
+// as unitPrice before a saving can be scaled by a recipe quantity.
+function unitWasPrice(offer) {
+  if (!offer.wasPrice || !(offer.price > 0)) return offer.unitPrice;
+  return offer.unitPrice * (offer.wasPrice / offer.price);
+}
+
 /**
  * Price one recipe against this week's offers.
- * @returns {{recipe, makeable: boolean, total: number, perServing: number,
- *            lines: Array, stores: Array, missingEssential: number}}
+ * @param {number} servingsWanted Household size, or 0 for the recipe's own.
+ * @returns {{recipe, servings: number, makeable: boolean, total: number,
+ *            saving: number, perServing: number, lines: Array, stores: Array,
+ *            missingEssential: number}}
  */
-export function costRecipe(recipe, byKey, ingredients) {
+export function costRecipe(recipe, byKey, ingredients, servingsWanted = 0) {
+  const base = recipe.servings > 0 ? recipe.servings : 1;
+  const servings = servingsWanted > 0 ? servingsWanted : base;
+  const scale = servings / base;
+
   const lines = recipe.ingredients.map((item) => {
     const offers = byKey.get(item.ingredientKey) ?? [];
     const best = offers[0] ?? null;
     const meta = ingredients[item.ingredientKey] ?? null;
+    const qty = round3(item.qty * scale);
     return {
       key: item.ingredientKey,
       label: meta?.label ?? item.ingredientKey,
-      qty: item.qty,
+      qty,
       unit: item.unit,
       essential: item.essential === true,
       offer: best,
-      cost: best ? round2(best.unitPrice * item.qty) : 0,
+      cost: best ? round2(best.unitPrice * qty) : 0,
+      saving: best ? round2((unitWasPrice(best) - best.unitPrice) * qty) : 0,
     };
   });
 
   const missingEssential = lines.filter((l) => l.essential && !l.offer).length;
   const total = round2(lines.reduce((sum, l) => sum + l.cost, 0));
+  const saving = round2(lines.reduce((sum, l) => sum + l.saving, 0));
 
   // Spend per store, so a user can see whether this is a one shop recipe.
   const spend = new Map();
@@ -68,22 +89,34 @@ export function costRecipe(recipe, byKey, ingredients) {
 
   return {
     recipe,
+    servings,
     makeable: missingEssential === 0,
     missingEssential,
     total,
-    perServing: recipe.servings > 0 ? round2(total / recipe.servings) : total,
+    saving,
+    perServing: servings > 0 ? round2(total / servings) : total,
     lines,
     stores,
   };
 }
 
-/** Cost every recipe, makeable ones first, then cheapest first. */
-export function costAll(recipes, byKey, ingredients) {
+const ORDER = {
+  cost: (a, b) => a.total - b.total,
+  saving: (a, b) => b.saving - a.saving || a.total - b.total,
+};
+
+/**
+ * Cost every recipe, makeable ones first.
+ * @param {number} servingsWanted Household size, or 0 for the recipe's own.
+ * @param {'cost'|'saving'} order How to rank the makeable ones.
+ */
+export function costAll(recipes, byKey, ingredients, servingsWanted = 0, order = 'cost') {
+  const rank = ORDER[order] ?? ORDER.cost;
   return recipes
-    .map((r) => costRecipe(r, byKey, ingredients))
+    .map((r) => costRecipe(r, byKey, ingredients, servingsWanted))
     .sort((a, b) => {
       if (a.makeable !== b.makeable) return a.makeable ? -1 : 1;
-      if (a.makeable) return a.total - b.total;
+      if (a.makeable) return rank(a, b);
       return a.missingEssential - b.missingEssential || a.total - b.total;
     });
 }

@@ -41,6 +41,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-chicken-thigh-1kg",
+      "store": "TESCO",
+      "ingredientKey": "chicken_thigh",
+      "name": "Irish Chicken Thighs",
+      "size": "1kg",
+      "price": 2.99,
+      "wasPrice": 3.79,
+      "unitPrice": 2.99,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "dunnes-chicken-breast-900g",
       "store": "DUNNES",
       "ingredientKey": "chicken_breast",
@@ -63,6 +75,18 @@
       "unitPrice": 6.49,
       "unitLabel": "per kg",
       "validTo": "2026-10-07"
+    },
+    {
+      "id": "tesco-chicken-breast-1kg",
+      "store": "TESCO",
+      "ingredientKey": "chicken_breast",
+      "name": "Irish Chicken Fillets",
+      "size": "1kg",
+      "price": 5.99,
+      "wasPrice": 7.49,
+      "unitPrice": 5.99,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
     },
     {
       "id": "aldi-beef-mince-500g",
@@ -89,6 +113,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-beef-mince-500g",
+      "store": "TESCO",
+      "ingredientKey": "beef_mince",
+      "name": "Irish Beef Mince 5% Fat",
+      "size": "500g",
+      "price": 3.29,
+      "wasPrice": 4.19,
+      "unitPrice": 6.58,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "lidl-pork-sausage-454g",
       "store": "LIDL",
       "ingredientKey": "pork_sausage",
@@ -111,6 +147,18 @@
       "unitPrice": 4.48,
       "unitLabel": "per kg",
       "validTo": "2026-10-09"
+    },
+    {
+      "id": "tesco-pork-sausage-400g",
+      "store": "TESCO",
+      "ingredientKey": "pork_sausage",
+      "name": "Irish Pork Sausages",
+      "size": "400g",
+      "price": 1.89,
+      "wasPrice": 2.29,
+      "unitPrice": 4.73,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
     },
     {
       "id": "dunnes-bacon-rasher-300g",
@@ -161,6 +209,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-salmon-fillet-240g",
+      "store": "TESCO",
+      "ingredientKey": "salmon_fillet",
+      "name": "Salmon Fillets, 2 pack",
+      "size": "240g",
+      "price": 4.29,
+      "wasPrice": 5.29,
+      "unitPrice": 17.88,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-egg-12pack",
       "store": "ALDI",
       "ingredientKey": "egg",
@@ -195,6 +255,18 @@
       "unitPrice": 0.27,
       "unitLabel": "each",
       "validTo": "2026-10-11"
+    },
+    {
+      "id": "tesco-egg-12pack",
+      "store": "TESCO",
+      "ingredientKey": "egg",
+      "name": "Free Range Eggs, 12 pack",
+      "size": "12 pack",
+      "price": 2.69,
+      "wasPrice": 3.29,
+      "unitPrice": 0.22,
+      "unitLabel": "each",
+      "validTo": "2026-10-10"
     },
     {
       "id": "lidl-onion-brown-1kg",
@@ -233,6 +305,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-onion-brown-1kg",
+      "store": "TESCO",
+      "ingredientKey": "onion_brown",
+      "name": "Brown Onions",
+      "size": "1kg",
+      "price": 0.95,
+      "wasPrice": null,
+      "unitPrice": 0.95,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-carrot-1kg",
       "store": "ALDI",
       "ingredientKey": "carrot",
@@ -257,6 +341,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-carrot-1kg",
+      "store": "TESCO",
+      "ingredientKey": "carrot",
+      "name": "Irish Carrots",
+      "size": "1kg",
+      "price": 0.69,
+      "wasPrice": 0.95,
+      "unitPrice": 0.69,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-potato-5kg",
       "store": "ALDI",
       "ingredientKey": "potato",
@@ -276,7 +372,7 @@
       "size": "2kg",
       "price": 1.99,
       "wasPrice": 2.49,
-      "unitPrice": 1.0,
+      "unitPrice": 1,
       "unitLabel": "per kg",
       "validTo": "2026-10-07"
     },
@@ -293,6 +389,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-potato-2.5kg",
+      "store": "TESCO",
+      "ingredientKey": "potato",
+      "name": "Irish Rooster Potatoes",
+      "size": "2.5kg",
+      "price": 1.79,
+      "wasPrice": 2.29,
+      "unitPrice": 0.72,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "lidl-sweet-potato-1kg",
       "store": "LIDL",
       "ingredientKey": "sweet_potato",
@@ -303,6 +411,18 @@
       "unitPrice": 1.49,
       "unitLabel": "per kg",
       "validTo": "2026-10-07"
+    },
+    {
+      "id": "tesco-sweet-potato-1kg",
+      "store": "TESCO",
+      "ingredientKey": "sweet_potato",
+      "name": "Sweet Potatoes",
+      "size": "1kg",
+      "price": 1.29,
+      "wasPrice": 1.69,
+      "unitPrice": 1.29,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
     },
     {
       "id": "aldi-broccoli-350g",
@@ -329,6 +449,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-broccoli-350g",
+      "store": "TESCO",
+      "ingredientKey": "broccoli",
+      "name": "Broccoli Head",
+      "size": "350g",
+      "price": 0.75,
+      "wasPrice": null,
+      "unitPrice": 2.14,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "lidl-mushroom-chestnut-250g",
       "store": "LIDL",
       "ingredientKey": "mushroom_chestnut",
@@ -353,6 +485,18 @@
       "validTo": "2026-10-09"
     },
     {
+      "id": "tesco-mushroom-chestnut-300g",
+      "store": "TESCO",
+      "ingredientKey": "mushroom_chestnut",
+      "name": "Chestnut Mushrooms",
+      "size": "300g",
+      "price": 0.99,
+      "wasPrice": 1.35,
+      "unitPrice": 3.3,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-pepper-mixed-500g",
       "store": "ALDI",
       "ingredientKey": "pepper_mixed",
@@ -375,6 +519,18 @@
       "unitPrice": 4.42,
       "unitLabel": "per kg",
       "validTo": "2026-10-11"
+    },
+    {
+      "id": "tesco-pepper-mixed-500g",
+      "store": "TESCO",
+      "ingredientKey": "pepper_mixed",
+      "name": "Mixed Peppers, 3 pack",
+      "size": "500g",
+      "price": 1.85,
+      "wasPrice": 2.35,
+      "unitPrice": 3.7,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
     },
     {
       "id": "lidl-tomato-vine-500g",
@@ -413,6 +569,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-garlic-3pack",
+      "store": "TESCO",
+      "ingredientKey": "garlic",
+      "name": "Garlic Bulbs, 3 pack",
+      "size": "3 pack",
+      "price": 0.99,
+      "wasPrice": null,
+      "unitPrice": 0.33,
+      "unitLabel": "each",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-spinach-260g",
       "store": "ALDI",
       "ingredientKey": "spinach",
@@ -435,6 +603,18 @@
       "unitPrice": 6.45,
       "unitLabel": "per kg",
       "validTo": "2026-10-11"
+    },
+    {
+      "id": "tesco-spinach-250g",
+      "store": "TESCO",
+      "ingredientKey": "spinach",
+      "name": "Baby Spinach",
+      "size": "250g",
+      "price": 1.09,
+      "wasPrice": 1.39,
+      "unitPrice": 4.36,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
     },
     {
       "id": "aldi-leek-500g",
@@ -521,6 +701,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-cheddar-400g",
+      "store": "TESCO",
+      "ingredientKey": "cheddar",
+      "name": "Irish Mature Cheddar",
+      "size": "400g",
+      "price": 2.69,
+      "wasPrice": 3.49,
+      "unitPrice": 6.73,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "lidl-butter-227g",
       "store": "LIDL",
       "ingredientKey": "butter",
@@ -543,6 +735,18 @@
       "unitPrice": 8.13,
       "unitLabel": "per kg",
       "validTo": "2026-10-09"
+    },
+    {
+      "id": "tesco-butter-454g",
+      "store": "TESCO",
+      "ingredientKey": "butter",
+      "name": "Irish Creamery Butter",
+      "size": "454g",
+      "price": 3.49,
+      "wasPrice": 3.99,
+      "unitPrice": 7.69,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
     },
     {
       "id": "dunnes-milk-whole-2litre",
@@ -569,6 +773,18 @@
       "validTo": "2026-10-09"
     },
     {
+      "id": "tesco-milk-whole-2litre",
+      "store": "TESCO",
+      "ingredientKey": "milk_whole",
+      "name": "Irish Whole Milk",
+      "size": "2 litre",
+      "price": 2.39,
+      "wasPrice": null,
+      "unitPrice": 1.2,
+      "unitLabel": "per litre",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-cream-single-250ml",
       "store": "ALDI",
       "ingredientKey": "cream_single",
@@ -579,6 +795,18 @@
       "unitPrice": 3.96,
       "unitLabel": "per litre",
       "validTo": "2026-10-09"
+    },
+    {
+      "id": "tesco-cream-single-250ml",
+      "store": "TESCO",
+      "ingredientKey": "cream_single",
+      "name": "Single Cream",
+      "size": "250ml",
+      "price": 0.89,
+      "wasPrice": 1.09,
+      "unitPrice": 3.56,
+      "unitLabel": "per litre",
+      "validTo": "2026-10-10"
     },
     {
       "id": "lidl-yoghurt-natural-500g",
@@ -605,6 +833,18 @@
       "validTo": "2026-10-09"
     },
     {
+      "id": "tesco-feta-200g",
+      "store": "TESCO",
+      "ingredientKey": "feta",
+      "name": "Greek Feta",
+      "size": "200g",
+      "price": 1.59,
+      "wasPrice": 1.99,
+      "unitPrice": 7.95,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "lidl-rice-basmati-1kg",
       "store": "LIDL",
       "ingredientKey": "rice_basmati",
@@ -629,6 +869,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-rice-basmati-1kg",
+      "store": "TESCO",
+      "ingredientKey": "rice_basmati",
+      "name": "Basmati Rice",
+      "size": "1kg",
+      "price": 2.19,
+      "wasPrice": 2.69,
+      "unitPrice": 2.19,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-pasta-penne-500g",
       "store": "ALDI",
       "ingredientKey": "pasta_penne",
@@ -651,6 +903,18 @@
       "unitPrice": 1.98,
       "unitLabel": "per kg",
       "validTo": "2026-10-11"
+    },
+    {
+      "id": "tesco-pasta-penne-500g",
+      "store": "TESCO",
+      "ingredientKey": "pasta_penne",
+      "name": "Penne Pasta",
+      "size": "500g",
+      "price": 0.79,
+      "wasPrice": 0.99,
+      "unitPrice": 1.58,
+      "unitLabel": "per kg",
+      "validTo": "2026-10-10"
     },
     {
       "id": "aldi-tomato-tin-400gtin",
@@ -687,6 +951,18 @@
       "unitPrice": 0.59,
       "unitLabel": "each",
       "validTo": "2026-10-11"
+    },
+    {
+      "id": "tesco-tomato-tin-4x400g",
+      "store": "TESCO",
+      "ingredientKey": "tomato_tin",
+      "name": "Chopped Tomatoes, 4 pack",
+      "size": "4 x 400g",
+      "price": 1.56,
+      "wasPrice": 1.96,
+      "unitPrice": 0.39,
+      "unitLabel": "each",
+      "validTo": "2026-10-10"
     },
     {
       "id": "aldi-chickpea-tin-400gtin",
@@ -845,6 +1121,18 @@
       "validTo": "2026-10-11"
     },
     {
+      "id": "tesco-tortilla-wrap-8pack",
+      "store": "TESCO",
+      "ingredientKey": "tortilla_wrap",
+      "name": "Plain Tortilla Wraps, 8 pack",
+      "size": "8 pack",
+      "price": 1.09,
+      "wasPrice": null,
+      "unitPrice": 1.09,
+      "unitLabel": "per pack",
+      "validTo": "2026-10-10"
+    },
+    {
       "id": "aldi-bread-white-800g",
       "store": "ALDI",
       "ingredientKey": "bread_white",
@@ -867,6 +1155,18 @@
       "unitPrice": 1.19,
       "unitLabel": "each",
       "validTo": "2026-10-07"
+    },
+    {
+      "id": "tesco-bread-white-800g",
+      "store": "TESCO",
+      "ingredientKey": "bread_white",
+      "name": "White Sliced Pan",
+      "size": "800g",
+      "price": 0.99,
+      "wasPrice": 1.29,
+      "unitPrice": 0.99,
+      "unitLabel": "each",
+      "validTo": "2026-10-10"
     }
   ]
 }

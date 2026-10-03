@@ -10,7 +10,7 @@ contract in PROBLEM.md. The contract was not changed.
 | File | What it is |
 | --- | --- |
 | `data/ingredients.json` | 41 key controlled vocabulary. 38 have an offer this week. |
-| `data/offers.json` | 72 offers, week 2026-W40, captured 2026-10-03, `source: "seed"`. |
+| `data/offers.json` | 97 offers across four stores, week 2026-W40, captured 2026-10-03, `source: "seed"`. |
 | `data/recipes.json` | 14 recipes. 13 makeable from this week's offers, 1 not. |
 | `data/validate.mjs` | Node check: contract, writing rules, matching rule. |
 | `src/adapters/store-adapter.js` | The `StoreAdapter` interface and the typedefs. |
@@ -34,11 +34,12 @@ Full API in `src/adapters/README.md`. Four things worth knowing:
    (2026-10-03) and say the data is a captured snapshot.
 2. `bestDeals(snapshot.offers, ingredients)` is the headline list: the
    cheapest store per ingredient, biggest percentage drop first. Use this
-   rather than sorting all 72 offers by `unitPrice`, which would compare a per
+   rather than sorting all 97 offers by `unitPrice`, which would compare a per
    each price against a per kg price and rank eggs above beef.
 3. `costRecipes(...)` returns `storeSplit` per recipe, which answers "is this
-   one shop or three". Of the 14 recipes, 1 is a single store shop, 10 need
-   two stores and 3 need all three, so the split is worth showing.
+   one shop or three". Of the 14 recipes, none is a single store
+   shop, 3 need two stores, 9 need three and 2 need all four, so the split is
+   worth showing.
 4. When `costIsPartial` is true, `cost` covers only the ingredients that are
    on offer, so do not print it as the price of the finished dish.
 
@@ -57,6 +58,63 @@ rather than always saying yes:
 - `soy_sauce` and `scallion` have no offer and are both non essential in
   `veg-fried-rice`, so it stays makeable with two missing optional lines.
 
+## Round 2: Tesco
+
+`TESCO` was already allowed by the frozen contract and by `scripts/check`.
+It was the data that did not have it. Round 2 filled that in. The contract
+shape did not change, only the set of stores with offers in it.
+
+| Change | File |
+| --- | --- |
+| 25 Tesco offers added, 72 to 97 | `data/offers.json` |
+| `TESCO` added to the store set the validator accepts | `data/validate.mjs` |
+| `TESCO` added to the `STORES` export and the `StoreCode` typedef | `src/adapters/store-adapter.js` |
+| `STORES` line updated to match | `src/adapters/README.md` |
+
+`src/ui/app.js` filters `STORES` by what is present in the offers, so the
+store list export had to grow or a Tesco filter could never appear. That file
+is in the `data` scope. No file outside it was touched.
+
+**No new ingredient keys.** All 25 offers use keys already in
+`ingredients.json`, so the vocabulary and the recipe bank are unchanged and
+nothing in the `app` agent needs to know about the change beyond the extra
+store code.
+
+**Tesco wins some and loses some**, which is the point: a store picker with a
+uniformly cheapest store has nothing to show.
+
+- Cheapest on 13 ingredients: chicken breasts, beef mince, eggs, potatoes,
+  sweet potatoes, chestnut mushrooms, spinach, cheddar, butter, single cream,
+  feta, chopped tomatoes, white sliced pan.
+- Beaten on 12: chicken thighs, pork sausages, salmon, onions, carrots,
+  broccoli, mixed peppers, garlic, milk, basmati rice, penne, tortilla wraps.
+- Cheapest offer count across the four stores is now ALDI 14, TESCO 13,
+  LIDL 9, DUNNES 2.
+
+**Seven recipes changed their largest store subtotal**, well past the two the
+task asked for:
+
+| Recipe | Was | Now |
+| --- | --- | --- |
+| Vegetable fried rice | ALDI | TESCO |
+| Mushroom pasta | ALDI | TESCO |
+| Chickpea and tomato stew | ALDI | TESCO |
+| Sweet potato and chickpea bake | ALDI | TESCO |
+| Cheese on toast with tomato | ALDI | TESCO |
+| Beef chilli | ALDI | TESCO |
+| Chicken fajitas | LIDL | TESCO |
+
+ALDI still leads four recipes, LIDL two and DUNNES one, so no store sweeps the
+board.
+
+**What was left alone on purpose.** `prawn_raw`, `soy_sauce` and `scallion`
+still have no offer at any store. Giving Tesco prawns would have made all 14
+recipes makeable and removed the one case where the matching rule says no,
+which is a UI state worth keeping in the demo.
+
+`source` is still `"seed"`. The Tesco prices are sample data written by hand,
+not read from Tesco.
+
 ## Validation
 
 Every claim below has a command behind it. All were run from the repo root.
@@ -67,15 +125,15 @@ exits 0:
 ```
 PASS
   ingredients  41 (38 with an offer this week)
-  offers       72 across 3 stores, week 2026-W40, captured 2026-10-03
+  offers       97 across 4 stores, week 2026-W40, captured 2026-10-03
   recipes      14 (13 makeable)
 ```
 
 It then prints every recipe costed, cheapest per serving first, for example:
 
 ```
-    Chicken traybake                   3.79   0.95/serving  saves 1.92  [ALDI 3.31, LIDL 0.48]
-    Salmon and leek traybake          10.07   2.52/serving  saves 2.50  [LIDL 8.32, ALDI 1.75]
+    Chicken traybake                   3.73   0.93/serving  saves 1.92  [ALDI 2.67, TESCO 0.58, LIDL 0.48]
+    Salmon and leek traybake          10.01   2.50/serving  saves 2.49  [LIDL 8.32, ALDI 1.03, TESCO 0.66]
   x Garlic prawn pasta                 1.45   0.36/serving  saves 0.14  [...]  missing: prawn_raw*
 ```
 
@@ -108,6 +166,32 @@ exit code: 1
 The scratch copy was deleted. The real data was not modified, and
 `node data/validate.mjs` passes again after the test.
 
+Round 2 repeated that test against the Tesco rows specifically, because the
+store set is the thing that changed. Four faults were seeded into a scratch
+copy and all four were caught:
+
+```
+FAIL: 4 problem(s)
+
+  offer tesco-egg-12pack: wasPrice 1 is not above price 2.69
+  offer tesco-potato-2.5kg: unknown store "SUPERVALU"
+  offer tesco-cheddar-400g: unitLabel "per litre" does not match the kg unit
+  offer aldi-bread-white-800g: duplicate id
+exit code: 1
+```
+
+Adding `TESCO` to the accepted set did not loosen the store check: an unknown
+store is still rejected. The scratch copy was deleted and the real data passes.
+
+`node scripts/check` also exits 0:
+
+```
+AIWeek check
+  - 97 offers, 14 recipes, 41 ingredients
+  - 13 recipe(s) makeable from this week's offers
+  PASS no contract or style violations
+```
+
 **3. Served over HTTP, not just read from disk.** `python3 -m http.server`
 on the repo root, then every shipped file requested:
 
@@ -130,9 +214,10 @@ at the HTTP origin, which is the same code path the browser takes:
 
 ```
 adapter seed isLive false
-loaded 41 ingredients, 72 offers, 14 recipes
-chicken_thigh across stores: ALDI 2.49 < LIDL 2.99 < DUNNES 3.29
-top recipe: Vegetable fried rice cost 1.86 partial true stores 2
+STORES ALDI, DUNNES, LIDL, TESCO
+loaded 41 ingredients, 97 offers, 14 recipes
+chicken_thigh across stores: ALDI 2.49 < LIDL 2.99 < TESCO 2.99 < DUNNES 3.29
+top recipe: Vegetable fried rice cost 1.77 partial true stores 3
 live stub throws NotImplemented: LiveAdapter.loadOffers is a stub...
 ```
 
@@ -158,7 +243,9 @@ check them and they are the `app` agent's to confirm:
 and `capturedAt` are honest in the data, and the UI is required to show them,
 but the numbers themselves are plausible Irish supermarket prices written by
 hand on 2026-10-03, not a reading of any store. They are not a record of what
-Aldi, Dunnes or Lidl charged in week 2026-W40. If the demo is described out
+Aldi, Dunnes, Lidl or Tesco charged in week 2026-W40. Tesco was added in round
+2 on the same basis, with prices chosen so the store wins on some ingredients
+and loses on others. If the demo is described out
 loud, it should be described as a snapshot shaped like real offer data. The
 `validTo` dates (7, 9 and 11 October 2026) are made up on the same basis.
 
@@ -177,7 +264,7 @@ blockers, neither of them code, both recorded in the file:
 
 **Unit prices are only comparable within one unit.** `unitPrice` is per kg,
 per litre, per each or per pack depending on the ingredient. Sorting the full
-72 offer list by it is meaningless across units. `bestDeals` exists to avoid
+97 offer list by it is meaningless across units. `bestDeals` exists to avoid
 this and the README says so, but nothing stops the UI calling
 `sortOffers(offers, 'unitPrice')` on the whole list and rendering a ranking
 that looks authoritative and is not.
@@ -191,7 +278,7 @@ for the chicken traybake will spend more than that at the till. The UI showing
 `size` next to each line mitigates it. Fixing it properly means ceiling to
 whole packs, which was out of scope for the time budget.
 
-**Savings depend on a `wasPrice` that 20 of 72 offers do not have.** Those
+**Savings depend on a `wasPrice` that 25 of 97 offers do not have.** Those
 score a saving of 0 and a `savingPct` of 0, which is correct and honest but
 pushes genuinely cheap items with no previous price to the bottom of
 `bestDeals`. Penne pasta at 0.69 per 500g is a good price and ranks last.

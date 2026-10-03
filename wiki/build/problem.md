@@ -170,7 +170,7 @@ that is not in here.
 }
 ```
 
-- `store` is one of `ALDI`, `DUNNES`, `LIDL`.
+- `store` is one of `ALDI`, `DUNNES`, `LIDL`, `TESCO`.
 - `wasPrice` may be `null` when there is no previous price.
 - `unitPrice` and `unitLabel` exist so unlike sizes can be compared honestly.
 

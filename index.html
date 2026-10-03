@@ -4,26 +4,81 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#FFE500">
-<meta name="description" content="This week's cheapest ingredients across Aldi, Dunnes Stores and Lidl in Ireland, and the recipes they make.">
+<meta name="description" content="This week's cheapest ingredients across Irish supermarkets, and the recipes they make.">
 <title>Yellow Label</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./styles/label.css">
 </head>
 <body>
-<a class="skip" href="#offers">Skip to offers</a>
+<a class="skip" href="#recipes">Skip to meals</a>
 
 <header class="masthead">
   <div class="masthead__row">
     <p class="stamp stamp--week" id="week-stamp">WEEK</p>
-    <p class="masthead__stores">ALDI &middot; DUNNES &middot; LIDL</p>
+    <p class="masthead__stores" id="masthead-stores"></p>
   </div>
   <h1 class="masthead__title">This week, cheapest first</h1>
-  <p class="masthead__sub">Offers across three Irish supermarkets, and what they cook. Prices in EUR.</p>
-  <p class="snapshot" id="snapshot-note">Loading the snapshot.</p>
 </header>
 
+<section class="shopbar" aria-labelledby="shop-head">
+  <div class="shopbar__row">
+    <fieldset class="control control--grow">
+      <legend class="control__legend" id="shop-head">Stores you shop at</legend>
+      <div class="picker" id="store-picker"></div>
+    </fieldset>
+    <div class="control">
+      <span class="control__legend" aria-hidden="true">Saved choices</span>
+      <button type="button" class="btn" id="reset-btn">Reset filters</button>
+    </div>
+  </div>
+</section>
+
 <main>
+  <section class="section" id="recipes" aria-labelledby="recipes-head">
+    <div class="section__head">
+      <h2 id="recipes-head">Meals this week</h2>
+      <p class="section__count" id="recipe-count" role="status"></p>
+    </div>
+
+    <div class="controls">
+      <div class="control">
+        <label class="control__legend" for="time-select">Cook time</label>
+        <select id="time-select" class="select">
+          <option value="0">Any</option>
+          <option value="45">Under 45 min</option>
+          <option value="30">Under 30 min</option>
+          <option value="20">Under 20 min</option>
+        </select>
+      </div>
+      <div class="control">
+        <label class="control__legend" for="servings-select">Servings</label>
+        <select id="servings-select" class="select">
+          <option value="0">As written</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="8">8</option>
+        </select>
+      </div>
+      <div class="control">
+        <label class="control__legend" for="recipe-sort-select">Sort recipes</label>
+        <select id="recipe-sort-select" class="select">
+          <option value="cost">Total cost, low to high</option>
+          <option value="saving">Saving, high to low</option>
+        </select>
+      </div>
+    </div>
+
+    <ul class="recipes" id="recipe-list"></ul>
+    <p class="empty" id="recipe-empty" hidden></p>
+  </section>
+
+  <hr class="barcode" aria-hidden="true">
+
   <section class="section" id="offers" aria-labelledby="offers-head">
     <div class="section__head">
       <h2 id="offers-head">Offers</h2>
@@ -31,12 +86,12 @@
     </div>
 
     <div class="controls">
-      <fieldset class="control">
-        <legend class="control__legend">Store</legend>
-        <div class="segment" id="store-filter"></div>
-      </fieldset>
+      <div class="control control--grow">
+        <label class="control__legend" for="search-input">Find an ingredient</label>
+        <input type="search" id="search-input" class="input" placeholder="chicken, broccoli, pasta" autocomplete="off">
+      </div>
       <div class="control">
-        <label class="control__legend" for="sort-select">Sort</label>
+        <label class="control__legend" for="sort-select">Sort offers</label>
         <select id="sort-select" class="select">
           <option value="price">Shelf price, low to high</option>
           <option value="unit">Unit price, low to high</option>
@@ -46,21 +101,8 @@
       </div>
     </div>
 
-    <p class="section__note">Yellow labels are the cheapest offer for that ingredient this week. Unit price compares like with like inside one ingredient only, so a "per kg" and an "each" price sorted together are not the same measure.</p>
-
     <ul class="grid" id="offer-grid"></ul>
-    <p class="empty" id="offer-empty" hidden>No offers match that filter.</p>
-  </section>
-
-  <hr class="barcode" aria-hidden="true">
-
-  <section class="section" id="recipes" aria-labelledby="recipes-head">
-    <div class="section__head">
-      <h2 id="recipes-head">What that cooks</h2>
-      <p class="section__count" id="recipe-count" role="status"></p>
-    </div>
-    <p class="section__note">Cost is the cheapest offer per ingredient this week, scaled by the amount the recipe needs. Ingredients with no offer are priced at zero and called out on the line.</p>
-    <ul class="recipes" id="recipe-list"></ul>
+    <p class="empty" id="offer-empty" hidden></p>
   </section>
 </main>
 

@@ -47,16 +47,29 @@ function cardHtml(priced) {
     ? '<span class="stamp stamp--flag">Makeable</span>'
     : `<span class="stamp stamp--miss">${plural(priced.missingEssential, 'item short', 'items short')}</span>`;
 
+  const facts = [
+    plural(priced.servings, 'serving', 'servings'),
+    `${recipe.minutes} min`,
+  ];
+  if (priced.servings !== recipe.servings) {
+    facts.push(`scaled from ${recipe.servings}`);
+  }
+
+  const savingLine = priced.saving > 0
+    ? `<span class="recipe__saving">Saves ${money(priced.saving)}</span>`
+    : '';
+
   return `
     <li class="recipe${priced.makeable ? '' : ' recipe--short'}">
       <div class="recipe__head">
         <h3 class="recipe__title">${esc(recipe.title)}</h3>
         ${flag}
       </div>
-      <p class="recipe__facts">${plural(recipe.servings, 'serving', 'servings')} / ${recipe.minutes} min</p>
+      <p class="recipe__facts">${facts.join(' / ')}</p>
       <p class="recipe__cost">
         <span class="price">${priceHtml(priced.total)}</span>
         <span class="recipe__per">${money(priced.perServing)} per serving</span>
+        ${savingLine}
       </p>
       <table class="basket">
         <caption>Cheapest offer per ingredient</caption>
@@ -74,7 +87,19 @@ function cardHtml(priced) {
     </li>`;
 }
 
-export function renderRecipes(root, pricedRecipes) {
-  root.innerHTML = pricedRecipes.map(cardHtml).join('');
-  return pricedRecipes.filter((p) => p.makeable).length;
+/**
+ * Render the cards that pass the cook time filter.
+ * @returns {{shown: number, makeable: number}}
+ */
+export function renderRecipes(root, pricedRecipes, state) {
+  const cap = state.maxMinutes;
+  const shown = cap > 0
+    ? pricedRecipes.filter((p) => p.recipe.minutes < cap)
+    : pricedRecipes;
+
+  root.innerHTML = shown.map(cardHtml).join('');
+  return {
+    shown: shown.length,
+    makeable: shown.filter((p) => p.makeable).length,
+  };
 }

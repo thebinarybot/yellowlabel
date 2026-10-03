@@ -7,7 +7,23 @@ export const STORE_NAMES = {
   ALDI: 'Aldi',
   DUNNES: 'Dunnes Stores',
   LIDL: 'Lidl',
+  TESCO: 'Tesco',
 };
+
+// Display order for the stores that are known by name. Anything else sorts
+// after them, alphabetically, so a new store code in the data still renders.
+const STORE_ORDER = Object.keys(STORE_NAMES);
+
+/** Store codes present in a set of offers, in display order. */
+export function storesInOffers(offers) {
+  const found = [...new Set(offers.map((o) => o.store))];
+  return found.sort((a, b) => {
+    const ia = STORE_ORDER.indexOf(a);
+    const ib = STORE_ORDER.indexOf(b);
+    if (ia !== ib) return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    return a.localeCompare(b);
+  });
+}
 
 /** Round to cents, away from float noise. */
 export function round2(n) {

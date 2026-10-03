@@ -1,0 +1,16 @@
+{
+  "name": "yellowlabel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Weekly supermarket offers and the meals they make",
+  "license": "MIT",
+  "scripts": {
+    "build": "bash scripts/build-dist",
+    "check": "node scripts/check && node data/validate.mjs",
+    "serve": "python3 -m http.server 8080"
+  },
+  "devDependencies": {
+    "cf": "^1.0.0-beta.12",
+    "wrangler": "^4.147.0"
+  }
+}

@@ -64,7 +64,7 @@ It ranks on percentage rather than unit price on purpose. See the note below.
 - `bestDeals(offers, ingredients)`, described above.
 - `unitSaving(offer)` is the per unit drop against `wasPrice`, or `0`.
 - `round2(n)` for cent safe money arithmetic.
-- `STORES` is `['ALDI', 'DUNNES', 'LIDL']` in display order.
+- `STORES` is `['ALDI', 'DUNNES', 'LIDL', 'TESCO']` in display order.
 
 All of these are pure. No DOM, no fetch.
 
